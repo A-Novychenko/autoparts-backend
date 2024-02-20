@@ -1,0 +1,40 @@
+{
+  "name": "am-server",
+  "private": true,
+  "version": "0.0.1",
+  "description": "am-server",
+  "main": "server.js",
+  "engines": {
+    "node": ">=14.20.1"
+  },
+  "scripts": {
+    "start": "cross-env NODE_ENV=production node ./server.js",
+    "start:dev": "cross-env NODE_ENV=development nodemon ./server.js",
+    "lint": "eslint **/*.js",
+    "lint:fix": "eslint --fix **/*.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.18.2",
+    "joi": "^17.12.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.1.3",
+    "morgan": "^1.10.0",
+    "nanoid": "^5.0.6"
+  },
+  "devDependencies": {
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "nodemon": "^3.0.3"
+  },
+  "repository": "https://github.com/A-Novychenko/autoparts-backend.git",
+  "author": "A-Novychenko <A.Novychenko@outlook.com>",
+  "license": "MIT"
+}
