@@ -1,11 +1,15 @@
 const express = require("express")
 
+require("dotenv").config()
+
+const { PORT} = process.env
+
 const app = express()
 
 app.get("/", (req, res) => { 
     res.send("Admin connection successful")
 })
 
-app.listen(3005, () => { 
-    console.log('Server successfully run on port 3005')
+app.listen(PORT, () => { 
+    console.log(`Server successfully run on port ${PORT}`)
 })
