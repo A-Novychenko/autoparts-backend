@@ -1,13 +1,10 @@
 const express = require("express")
+const { authController} = require("../../controllers")
 
 const router = express.Router()
 
-router.post("/login", async (req, res) => { 
-    res.json({message: "success"})
-})
+router.post("/login", authController.login)
 
-router.post("/logout", async (req, res) => { 
-    res.status(204).end()
-})
+router.post("/logout", authController.logout)
 
 module.exports = router
