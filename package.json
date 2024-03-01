@@ -13,10 +13,9 @@
     "lint": "eslint **/*.js",
     "lint:fix": "eslint --fix **/*.js"
   },
-    "repository": "https://github.com/A-Novychenko/autoparts-backend.git",
+  "repository": "https://github.com/A-Novychenko/autoparts-backend.git",
   "author": "A-Novychenko <A.Novychenko@outlook.com>",
   "license": "MIT",
-  
   "dependencies": {
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
@@ -36,7 +35,7 @@
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.1.1",
-    "nodemon": "^3.0.3"
+    "nodemon": "^3.0.3",
+    "prettier": "^3.2.5"
   }
-
 }
