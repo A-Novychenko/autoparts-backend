@@ -1,15 +1,16 @@
 const { HttpError } = require('../helpers');
 
 const validateBody = schema => {
-  const wrap = (req, res, next) => {
-    const err = schema.validate(req.body);
+  const validate = (req, res, next) => {
+    const { error } = schema.validate(req.body);
 
-    if (err) next(HttpError(400, err.message));
-
+    if (error) {
+      next(HttpError(400, error.message));
+    }
+    console.log('NEXT');
     next();
   };
-
-  return wrap;
+  return validate;
 };
 
 module.exports = validateBody;
