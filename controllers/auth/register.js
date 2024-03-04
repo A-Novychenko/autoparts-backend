@@ -1,5 +1,7 @@
-const { HttpError } = require('../../helpers');
+const bcrypt = require('bcrypt');
+
 const { User } = require('../../models/user');
+const { HttpError } = require('../../helpers');
 
 const register = async (req, res) => {
   const { login, password } = req.body;
@@ -10,13 +12,20 @@ const register = async (req, res) => {
     throw HttpError(409, 'This login cannot be registered, try another one');
   }
 
-  const newUser = await User.create({ ...req.body });
-  console.log('newUser', newUser);
+  const hashPassword = await bcrypt.hash(password, 10);
+
+  const newUser = await User.create({ ...req.body, password: hashPassword });
 
   res.status(201).json({
     status: 'created',
     code: 201,
-    user: newUser,
+    user: {
+      _id: newUser._id,
+      name: newUser.name,
+      login: newUser.login,
+      role: newUser.role,
+      status: newUser.status,
+    },
   });
 };
 

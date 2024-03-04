@@ -1,7 +1,8 @@
 const express = require('express');
+
 const {
   login,
-  getUser,
+  getCurrentUser,
   getAllUsers,
   changeStatus,
   logout,
@@ -10,21 +11,32 @@ const {
 } = require('../../controllers/auth');
 const { validateBody } = require('../../decorators');
 const { schemas } = require('../../models/user');
+const { authenticate, isValidId } = require('../../middlewares');
 
 const router = express.Router();
 
-router.post('/register', validateBody(schemas.registerSchema), register);
+router.post(
+  '/register',
+  authenticate,
+  validateBody(schemas.registerSchema),
+  register,
+);
 
-router.post('/login', login);
+router.post('/login', validateBody(schemas.loginSchema), login);
 
-router.get('/user', getAllUsers);
+router.get('/user', authenticate, getAllUsers);
 
-router.patch('/status', changeStatus);
+router.patch(
+  '/status',
+  authenticate,
+  validateBody(schemas.changeStatus),
+  changeStatus,
+);
 
-router.get('/current', getUser);
+router.get('/current', authenticate, getCurrentUser);
 
-router.post('/logout', logout);
+router.post('/logout', authenticate, logout);
 
-router.delete('/user/:id', removeUser);
+router.delete('/user/:id', authenticate, isValidId, removeUser);
 
 module.exports = router;

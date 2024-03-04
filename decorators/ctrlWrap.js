@@ -3,6 +3,7 @@ const ctrlWrap = ctrl => {
     try {
       await ctrl(req, res, next);
     } catch (e) {
+      console.log('error.status ');
       next(e);
     }
   };

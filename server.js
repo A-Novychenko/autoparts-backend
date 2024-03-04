@@ -6,6 +6,7 @@ require('dotenv').config();
 const { createErrorReq } = require('./helpers');
 
 const { PORT = 3005, DB_HOST } = process.env;
+
 const authRouter = require('./routes/api/auth');
 
 const app = express();

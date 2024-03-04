@@ -9,12 +9,7 @@ const removeUser = async (req, res) => {
     throw HttpError(404, 'Not found');
   }
 
-  res.json({
-    status: 'success',
-    code: 200,
-    message: 'User deleted',
-    user,
-  });
+  res.status(204).end();
 };
 
 module.exports = removeUser;

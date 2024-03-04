@@ -19,13 +19,14 @@ const userSchema = new Schema(
       min: [5, 'Login must have minimum 5 characters'],
       max: [10, 'Login must have minimum 10 characters'],
       required: [true, 'Set login for user'],
-      //   unique: true,
+      unique: true,
     },
     password: {
       type: String,
       min: [8, 'Password must have minimum 8 characters'],
       max: [64, 'Password must have minimum 64 characters'],
       required: [true, 'Set password for user'],
+      // match: 'regular expression',
     },
     role: {
       type: String,
@@ -35,8 +36,12 @@ const userSchema = new Schema(
     status: {
       type: String,
       enum: ['enabled', 'disabled'],
-      required: false,
+      required: true,
       default: 'disabled',
+    },
+    token: {
+      type: String,
+      default: '',
     },
   },
   { versionKey: false, timestamps: true },
@@ -64,7 +69,12 @@ const updateSchema = Joi.object({
   status: Joi.string().valid('enabled', 'disabled').required(),
 });
 
-const schemas = { registerSchema, loginSchema, updateSchema };
+const changeStatus = Joi.object({
+  status: Joi.string().valid('enabled', 'disabled').required(),
+  id: Joi.string().required(),
+});
+
+const schemas = { registerSchema, loginSchema, updateSchema, changeStatus };
 
 const User = model('user', userSchema);
 
