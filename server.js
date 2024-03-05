@@ -8,6 +8,8 @@ const { createErrorReq } = require('./helpers');
 const { PORT = 3005, DB_HOST } = process.env;
 
 const authRouter = require('./routes/api/auth');
+const asgRouter = require('./routes/api/asg');
+const catalogRouter = require('./routes/api/catalog');
 
 const app = express();
 
@@ -18,6 +20,8 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/auth', authRouter);
+app.use('/api/asg', asgRouter);
+app.use('/api/catalog', catalogRouter);
 
 app.use((_, res, __) => {
   res.status(404).json({
