@@ -11,7 +11,6 @@ const authenticate = async (req, res, next) => {
   const [bearer, token] = authorization.split(' ');
 
   if (bearer !== 'Bearer') {
-    console.log('dddddd');
     next(HttpError(401));
   }
 
@@ -20,7 +19,12 @@ const authenticate = async (req, res, next) => {
 
     const user = await User.findById(id);
 
-    if (!user || !user.token || user.token !== token) {
+    if (
+      !user ||
+      !user.token ||
+      user.token !== token ||
+      user.status !== 'enabled'
+    ) {
       next(HttpError(401));
     }
 

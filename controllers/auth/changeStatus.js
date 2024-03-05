@@ -4,8 +4,6 @@ const { User } = require('../../models/user');
 const changeStatus = async (req, res) => {
   const { status, id } = req.body;
 
-  console.log('status', status);
-
   const result = await User.find({ _id: id });
 
   if (!result) {

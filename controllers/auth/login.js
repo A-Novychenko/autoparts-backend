@@ -11,7 +11,7 @@ const login = async (req, res) => {
 
   const user = await User.findOne({ login });
 
-  if (!user) {
+  if (!user || user.status !== 'enabled') {
     throw HttpError(401, 'Login or password is invalid.');
   }
 
