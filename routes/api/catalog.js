@@ -1,9 +1,16 @@
 const express = require('express');
 
-const { getParentCategory } = require('../../controllers/catalog');
+const {
+  getMainCategory,
+  getCategory,
+  getProducts,
+} = require('../../controllers/catalog');
+const { validateBody } = require('../../decorators');
 
 const router = express.Router();
 
-router.get('/', getParentCategory);
+router.get('/', getMainCategory);
+router.get('/category', getCategory);
+router.get('/products', getProducts);
 
 module.exports = router;

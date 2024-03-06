@@ -1,6 +1,10 @@
 const { ctrlWrap } = require('../../decorators');
-const getParentCategory = require('./getParentCategory');
+const getMainCategory = require('./getMainCategory');
+const getCategory = require('./getCategory');
+const getProducts = require('./getProducts');
 
 module.exports = {
-  getParentCategory: ctrlWrap(getParentCategory),
+  getMainCategory: ctrlWrap(getMainCategory),
+  getCategory: ctrlWrap(getCategory),
+  getProducts: ctrlWrap(getProducts),
 };
