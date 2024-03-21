@@ -39,7 +39,11 @@ const userSchema = new Schema(
       required: true,
       default: 'disabled',
     },
-    token: {
+    accessToken: {
+      type: String,
+      default: '',
+    },
+    refreshToken: {
       type: String,
       default: '',
     },
@@ -61,6 +65,10 @@ const loginSchema = Joi.object({
   password: Joi.string().min(8).max(64).pattern(passwordRegexp).required(),
 });
 
+const refreshSchema = Joi.object({
+  refreshToken: Joi.string().required(),
+});
+
 const updateSchema = Joi.object({
   name: Joi.string().min(2).max(32).pattern(nameRegexp).required(),
   login: Joi.string().min(5).max(10).pattern(loginRegexp).required(),
@@ -74,7 +82,13 @@ const changeStatus = Joi.object({
   id: Joi.string().required(),
 });
 
-const schemas = { registerSchema, loginSchema, updateSchema, changeStatus };
+const schemas = {
+  registerSchema,
+  loginSchema,
+  refreshSchema,
+  updateSchema,
+  changeStatus,
+};
 
 const User = model('user', userSchema);
 

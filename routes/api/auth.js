@@ -4,6 +4,7 @@ const {
   login,
   getCurrentUser,
   getAllUsers,
+  refresh,
   changeStatus,
   logout,
   register,
@@ -18,6 +19,8 @@ const router = express.Router();
 router.post('/login', validateBody(schemas.loginSchema), login);
 
 router.get('/current', authenticate, getCurrentUser);
+
+router.post('/refresh', validateBody(schemas.refreshSchema), refresh);
 
 router.post('/logout', authenticate, logout);
 
