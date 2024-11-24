@@ -3,6 +3,7 @@ const { serviceASG, HttpError } = require('./');
 const { ASG_LOGIN, ASG_PASSWORD } = process.env;
 
 const fetchImgs = async productsIds => {
+  console.log('AGG-connect');
   try {
     // const { data } = await serviceASG.post('/product-images', productsIds);
     const { data } = await serviceASG.post('/product-images', {

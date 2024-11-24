@@ -10,13 +10,13 @@ const getProducts = async (req, res) => {
   const products = await ASGProduct.find({ category_id: id }).limit(20);
 
   const productsIds = products.map(({ id }) => id);
-  console.log('productsIds', productsIds);
+  // console.log('productsIds', productsIds);
 
   const data = await fetchImgs(productsIds);
 
   const imgs = data.data;
 
-  console.log('imgs', imgs);
+  // console.log('imgs', imgs);
 
   const productsWithImg = products.map(product => {
     const imgIdx = imgs.findIndex(
@@ -31,7 +31,7 @@ const getProducts = async (req, res) => {
 
     const productWithImg = { ...product._doc, img };
 
-    console.log('productWithImg', productWithImg);
+    // console.log('productWithImg', productWithImg);
 
     return productWithImg;
   });
