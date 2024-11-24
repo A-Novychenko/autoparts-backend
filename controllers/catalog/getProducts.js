@@ -7,7 +7,7 @@ const getProducts = async (req, res) => {
 
   console.log('id', id);
 
-  const products = await ASGProduct.find({ category_id: id });
+  const products = await ASGProduct.find({ category_id: id }).limit(20);
 
   // const productsIds = products.map(({ id }) => id);
   // console.log('productsIds', productsIds);
