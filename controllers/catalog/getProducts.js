@@ -9,34 +9,38 @@ const getProducts = async (req, res) => {
 
   const products = await ASGProduct.find({ category_id: id }).limit(20);
 
-  // const productsIds = products.map(({ id }) => id);
-  // console.log('productsIds', productsIds);
+  const productsIds = products.map(({ id }) => id);
+  console.log('productsIds', productsIds);
 
-  // const data = await fetchImgs(productsIds);
+  const data = await fetchImgs(productsIds);
 
-  // const imgs = data.data;
+  const imgs = data.data;
 
-  // const productsWithImg = products.map(product => {
-  //   const imgIdx = imgs.findIndex(
-  //     ({ product_id }) => product_id === product.id,
-  //   );
+  console.log('imgs', imgs);
 
-  //   if (imgIdx === -1) {
-  //     return product;
-  //   }
+  const productsWithImg = products.map(product => {
+    const imgIdx = imgs.findIndex(
+      ({ product_id }) => product_id === product.id,
+    );
 
-  //   const img = imgs[imgIdx].images[0];
+    if (imgIdx === -1) {
+      return product;
+    }
 
-  //   const productWithImg = { ...product._doc, img };
+    const img = imgs[imgIdx].images[0];
 
-  //   return productWithImg;
-  // });
+    const productWithImg = { ...product._doc, img };
+
+    console.log('productWithImg', productWithImg);
+
+    return productWithImg;
+  });
 
   res.json({
     status: 'OK',
     code: 200,
-    // products: productsWithImg,
-    products,
+    products: productsWithImg,
+    // products,
   });
 };
 
