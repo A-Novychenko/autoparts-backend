@@ -5,7 +5,7 @@ const pLimit = require('p-limit'); // Для обмеження паралель
 const { ASG_LOGIN, ASG_PASSWORD } = process.env;
 
 // Максимальна кількість одночасних запитів
-const MAX_CONCURRENT_REQUESTS = 105;
+const MAX_CONCURRENT_REQUESTS = 10;
 
 // Функція для отримання даних із сервісу
 const fetchBatch = async page => {
