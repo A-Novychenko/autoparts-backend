@@ -154,7 +154,7 @@ const getProducts = async (req, res) => {
   res.json({
     status: 'OK',
     code: 200,
-    products: productsWithImg,
+    products: productsWithImg ? productsWithImg : products,
     totalPages,
   });
 };
