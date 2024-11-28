@@ -1,11 +1,11 @@
 const ASGCategory = require('../../models/asg/categories');
 
-const getCategory = async (req, res) => {
-  const { id } = req.body;
+const getAllCategories = async (req, res) => {
+  const { id } = req.query;
 
   // console.log('id', id);
 
-  const categories = await ASGCategory.findOne({ id });
+  const categories = await ASGCategory.find({ parent_id: id });
 
   // console.log('categories', categories);
 
@@ -16,4 +16,4 @@ const getCategory = async (req, res) => {
   });
 };
 
-module.exports = getCategory;
+module.exports = getAllCategories;
