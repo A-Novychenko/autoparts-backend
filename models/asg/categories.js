@@ -1,6 +1,6 @@
 const { Schema, model } = require('mongoose');
 
-const ASGaCategorySchema = new Schema(
+const ASGCategorySchema = new Schema(
   {
     id: { type: Number, required: true },
     name: { type: String, required: true },
@@ -9,6 +9,6 @@ const ASGaCategorySchema = new Schema(
   { versionKey: false, timestamps: true },
 );
 
-const ASGCategory = model('ASGCategory', ASGaCategorySchema);
+const ASGCategory = model('ASGCategory', ASGCategorySchema);
 
 module.exports = ASGCategory;

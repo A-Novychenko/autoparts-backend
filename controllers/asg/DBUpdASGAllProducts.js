@@ -48,7 +48,7 @@ const updateDatabase = async batch => {
 // };
 
 // Основна функція для оновлення бази даних
-const updDB = async (req, res) => {
+const DBUpdASGAllProducts = async (req, res) => {
   console.log('Starting DB update...');
   const limit = pLimit(MAX_CONCURRENT_REQUESTS); // Ліміт на одночасні запити
   const allIds = new Set();
@@ -102,4 +102,4 @@ const updDB = async (req, res) => {
   }
 };
 
-module.exports = updDB;
+module.exports = DBUpdASGAllProducts;

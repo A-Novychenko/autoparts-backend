@@ -1,88 +1,5 @@
-// // const ASGCategory = require('../../models/asg/categories');
-// const fetchImgs = require('../../helpers/fetchASGImgs');
-// const ASGProduct = require('../../models/asg/products');
-
-// const getProducts = async (req, res) => {
-//   //  const productsLength = await ASGProduct.find({ category_id: id })
-
-//   // const products = await ASGProduct.find({ category_id: id }).limit(20);
-
-//   const { id, page = 1, limit = 20, favorite } = req.query;
-//   console.log('id', id);
-//   const skip = (page - 1) * limit;
-//   const filter = favorite === undefined ? null : { favorite };
-
-//   // const [products, totalCount] = await Promise.all([
-//   //   // ASGProduct.find({ category_id: id }).limit(20),
-//   //   ASGProduct.find({ category_id: id, ...filter }, '', {
-//   //     skip,
-//   //     limit,
-//   //   }),
-//   //   ASGProduct.countDocuments({ category_id: id }),
-//   // ]);
-
-//   // Параметр для фільтрації і сортування
-//   const filterAvailability = { count_warehouse_3: { $ne: '0' } }; // Фільтр на наявність товару (count_warehouse_3 не повинно бути "0")
-//   const sort = { count_warehouse_3: -1 }; // Спочатку продукти з більшими значеннями (тобто більше товару)
-
-//   const [products, totalCount] = await Promise.all([
-//     ASGProduct.find({ category_id: id, ...filter, ...filterAvailability }, '', {
-//       skip,
-//       limit,
-//       sort, // Додаємо сортування
-//     }),
-//     ASGProduct.countDocuments({
-//       category_id: id,
-//       ...filter,
-//       ...filterAvailability,
-//     }),
-//   ]);
-
-//   // const totalPages = totalCount / 20;
-//   const totalPages = Math.ceil(totalCount / 20);
-
-//   console.log('totalPages', totalPages);
-
-//   const productsIds = products.map(({ id }) => id);
-//   // console.log('productsIds', productsIds);
-
-//   const data = await fetchImgs(productsIds);
-
-//   const imgs = data.data;
-
-//   // console.log('imgs', imgs);
-
-//   const productsWithImg = products.map(product => {
-//     const imgIdx = imgs.findIndex(
-//       ({ product_id }) => product_id === product.id,
-//     );
-
-//     if (imgIdx === -1) {
-//       return product;
-//     }
-
-//     const img = imgs[imgIdx].images[0];
-
-//     const productWithImg = { ...product._doc, img };
-
-//     // console.log('productWithImg', productWithImg);
-
-//     return productWithImg;
-//   });
-
-//   res.json({
-//     status: 'OK',
-//     code: 200,
-//     products: productsWithImg,
-//     // products,
-//     totalPages,
-//   });
-// };
-
-// module.exports = getProducts;
-
-// const ASGCategory = require('../../models/asg/categories');
 const fetchImgs = require('../../helpers/fetchASGImgs');
+const ASGImage = require('../../models/asg/images');
 const ASGProduct = require('../../models/asg/products');
 
 const getProducts = async (req, res) => {
@@ -130,8 +47,12 @@ const getProducts = async (req, res) => {
 
   // Зображення
   const productsIds = products.map(({ id }) => id);
-  const data = await fetchImgs(productsIds);
-  const imgs = data.data;
+  // const data = await fetchImgs(productsIds);
+  // const imgs = data.data;
+
+  const imgs = await ASGImage.find({
+    product_id: { $in: productsIds },
+  });
 
   const productsWithImg = products.map(product => {
     const imgIdx = imgs.findIndex(
