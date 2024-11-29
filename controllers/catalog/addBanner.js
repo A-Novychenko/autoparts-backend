@@ -1,5 +1,3 @@
-// const { ASGCategory } = require('../../models/asg/categories');
-
 const addBanner = async (req, res) => {
   const { id } = req.body;
 
