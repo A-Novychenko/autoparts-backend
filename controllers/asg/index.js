@@ -1,14 +1,11 @@
 const { ctrlWrap } = require('../../decorators');
-const loginASG = require('./loginASG');
-const getCategoriesASG = require('./getCategoriesASG');
-const getAllProductsASG = require('./getAllProductsASG');
+
+const DBUpdASGAllCategories = require('./DBUpdASGAllCategories');
 const DBUpdASGAllProducts = require('./DBUpdASGAllProducts');
 const DBUpdASGAllImages = require('./DBUpdASGAllImages');
 
 module.exports = {
-  loginASG: ctrlWrap(loginASG),
-  getCategoriesASG: ctrlWrap(getCategoriesASG),
-  getAllProductsASG: ctrlWrap(getAllProductsASG),
+  DBUpdASGAllCategories: ctrlWrap(DBUpdASGAllCategories),
   DBUpdASGAllProducts: ctrlWrap(DBUpdASGAllProducts),
   DBUpdASGAllImages: ctrlWrap(DBUpdASGAllImages),
 };

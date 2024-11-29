@@ -1,4 +1,4 @@
-const ASGCategory = require('../../models/asg/categories');
+const { ASGCategory } = require('../../models/asg/categories');
 
 const getAllCategories = async (req, res) => {
   const { id } = req.query;

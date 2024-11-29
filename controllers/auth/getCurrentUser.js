@@ -4,9 +4,10 @@ const getCurrentUser = async (req, res) => {
   const { user } = req;
 
   res.json({
-    message: 'OK',
+    status: 'OK',
     code: 200,
-    token: user.token,
+    accessToken: user.accessToken,
+    refreshToken: user.refreshToken,
     user: {
       _id: user._id,
       name: user.name,

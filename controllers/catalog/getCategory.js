@@ -1,13 +1,9 @@
-const ASGCategory = require('../../models/asg/categories');
+const { ASGCategory } = require('../../models/asg/categories');
 
 const getCategory = async (req, res) => {
   const { id } = req.body;
 
-  // console.log('id', id);
-
   const categories = await ASGCategory.findOne({ id });
-
-  // console.log('categories', categories);
 
   res.json({
     status: 'OK',

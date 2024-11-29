@@ -1,4 +1,4 @@
-const ASGCategory = require('../../models/asg/categories');
+const { ASGCategory } = require('../../models/asg/categories');
 
 const getMainCategory = async (req, res) => {
   const categories = await ASGCategory.find({ parent_id: 0 }).sort({

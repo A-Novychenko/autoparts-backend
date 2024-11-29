@@ -1,25 +1,19 @@
 const express = require('express');
-const { authenticate } = require('../../middlewares');
+
+const { authenticate, isAdmin } = require('../../middlewares');
+
 const {
-  loginASG,
-  getCategoriesASG,
-  getAllProductsASG,
+  DBUpdASGAllCategories,
   DBUpdASGAllProducts,
   DBUpdASGAllImages,
 } = require('../../controllers/asg');
 
 const router = express.Router();
 
-// router.get('/login', authenticate, loginASG);
-router.get('/login', loginASG);
+router.get('/categories', authenticate, isAdmin, DBUpdASGAllCategories);
 
-// router.get('/login', authenticate, getCategoriesASG);
-router.get('/categories', getCategoriesASG);
+router.post('/upd-db-products', authenticate, isAdmin, DBUpdASGAllProducts);
 
-// router.get('/login', authenticate, getCategoriesASG);
-router.get('/prices', getAllProductsASG);
-
-router.post('/upd-db-products', DBUpdASGAllProducts);
-router.post('/upd-db-images', DBUpdASGAllImages);
+router.post('/upd-db-images', authenticate, isAdmin, DBUpdASGAllImages);
 
 module.exports = router;

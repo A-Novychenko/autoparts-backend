@@ -21,6 +21,8 @@ const refresh = async (req, res, next) => {
       expiresIn: '7d',
     });
 
+    await User.findByIdAndUpdate(id, { accessToken, refreshToken });
+
     res.json({ accessToken, refreshToken });
   } catch (e) {
     throw HttpError(403, e.message);
