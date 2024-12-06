@@ -9,12 +9,9 @@ const { ACCESS_SECRET_KEY } = process.env;
 const authenticate = async (req, res, next) => {
   const { authorization = '' } = req.headers;
 
-  console.log('FFF');
-
   const [bearer, accessToken] = authorization.split(' ');
 
   if (bearer !== 'Bearer') {
-    console.log('HHHH');
     next(HttpError(401));
   }
   console.log('RRR');

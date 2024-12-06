@@ -1,27 +1,34 @@
-const { serviceASG } = require('../../helpers');
+const pLimit = require('p-limit');
+
 const { ASGProduct } = require('../../models/asg/products');
-const pLimit = require('p-limit'); // Для обмеження паралельності запитів
+
+const { serviceASG } = require('../../helpers');
 
 const { ASG_LOGIN, ASG_PASSWORD } = process.env;
 
-// Максимальна кількість одночасних запитів
 const MAX_CONCURRENT_REQUESTS = 10;
 
-// Функція для отримання даних із сервісу
 const fetchBatch = async page => {
   try {
     const { data } = await serviceASG.post(`/prices?page=${page}`);
-    return data.data.items; // Повертає масив об'єктів
+
+    return data.data.items;
   } catch (e) {
     if (e.response?.status === 401) {
       console.log('Refreshing token...');
+
       const credentials = { login: ASG_LOGIN, password: ASG_PASSWORD };
+
       const resASG = await serviceASG.post('/auth/login', credentials);
+
       serviceASG.defaults.headers.common.Authorization = `Bearer ${resASG.data.access_token}`;
+
       const { data } = await serviceASG.post(`/prices?page=${page}`);
+
       return data.data.items;
     } else {
       console.error(`Error fetching page ${page}:`, e.message);
+
       throw new Error('Failed to fetch data');
     }
   }
@@ -42,16 +49,14 @@ const updateDatabase = async batch => {
   }
 };
 
-// Видалення застарілих даних
-// const removeStaleData = async existingIds => {
-//   await ASGProduct.deleteMany({ id: { $nin: existingIds } });
-// };
-
 // Основна функція для оновлення бази даних
 const DBUpdASGAllProducts = async (req, res) => {
   console.log('Starting DB update...');
-  const limit = pLimit(MAX_CONCURRENT_REQUESTS); // Ліміт на одночасні запити
+
+  const limit = pLimit(MAX_CONCURRENT_REQUESTS);
+
   const allIds = new Set();
+
   let currentPage = 1;
   let hasMoreData = true;
 
@@ -59,15 +64,19 @@ const DBUpdASGAllProducts = async (req, res) => {
     // Паралельне завантаження сторінок
     while (hasMoreData) {
       const tasks = [];
+
       for (let i = 0; i < MAX_CONCURRENT_REQUESTS && hasMoreData; i++) {
         const page = currentPage++;
+
         tasks.push(
           limit(async () => {
             console.log(`Fetching page ${page}...`);
+
             const batch = await fetchBatch(page);
 
             if (batch.length > 0) {
               await updateDatabase(batch);
+
               batch.forEach(item => allIds.add(item.id)); // Зберігаємо ID
             } else {
               hasMoreData = false; // Якщо порожній масив, закінчуємо
@@ -81,10 +90,6 @@ const DBUpdASGAllProducts = async (req, res) => {
       // Чекаємо завершення всіх завдань у цьому циклі
       await Promise.all(tasks);
     }
-
-    // Видалення застарілих даних
-    // console.log('Removing stale data...');
-    // await removeStaleData(Array.from(allIds));
 
     console.log('Database updated successfully');
     res.json({

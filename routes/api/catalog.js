@@ -3,6 +3,7 @@ const express = require('express');
 const {
   getMainCategory,
   getAllCategories,
+  getAllCategoriesWithMain,
   getCategory,
   getProducts,
   getProductsByTecDocArticle,
@@ -22,7 +23,9 @@ const router = express.Router();
 
 router.get('/', getMainCategory);
 
-router.get('/category', getAllCategories);
+router.get('/category', getAllCategories); //byParentId
+
+router.get('/category-with-main', getAllCategoriesWithMain);
 
 router.post('/category', validateBody(schemas.getCategory), getCategory);
 
