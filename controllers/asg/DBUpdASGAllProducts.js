@@ -1,5 +1,5 @@
 const { serviceASG } = require('../../helpers');
-const ASGProduct = require('../../models/asg/products');
+const { ASGProduct } = require('../../models/asg/products');
 const pLimit = require('p-limit'); // Для обмеження паралельності запитів
 
 const { ASG_LOGIN, ASG_PASSWORD } = process.env;

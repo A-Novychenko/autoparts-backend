@@ -15,12 +15,16 @@ const BannerSchema = new Schema(
     price: { type: String, required: true },
     price_sale: { type: String, required: true },
     count_warehouse_3: { type: String, required: true },
+    img: { type: String, required: true },
   },
   { versionKey: false, timestamps: true },
 );
 
 const addBanner = Joi.object({
-  //   id: Joi.number().required(),
+  id: Joi.number().required(),
+  price_sale: Joi.number().required(),
+  price: Joi.number().required(),
+  img: Joi.string().required(),
 });
 
 const schemasBanner = {

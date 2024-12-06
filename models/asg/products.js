@@ -1,3 +1,4 @@
+const Joi = require('joi');
 const { Schema, model } = require('mongoose');
 
 const ASGProductSchema = new Schema(
@@ -19,6 +20,14 @@ const ASGProductSchema = new Schema(
   { versionKey: false, timestamps: true },
 );
 
+const getCmsProduct = Joi.object({
+  article: Joi.string().required(),
+});
+
+const schemasProducts = {
+  getCmsProduct,
+};
+
 const ASGProduct = model('ASGProduct', ASGProductSchema);
 
-module.exports = ASGProduct;
+module.exports = { ASGProduct, schemasProducts };
