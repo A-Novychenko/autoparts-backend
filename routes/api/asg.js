@@ -12,6 +12,8 @@ const router = express.Router();
 
 router.get('/categories', authenticate, isAdmin, DBUpdASGAllCategories);
 
+router.post('/upd-db-categories', authenticate, isAdmin, DBUpdASGAllCategories);
+
 router.post('/upd-db-products', authenticate, isAdmin, DBUpdASGAllProducts);
 
 router.post('/upd-db-images', authenticate, isAdmin, DBUpdASGAllImages);

@@ -7,6 +7,7 @@ const ASGCategorySchema = new Schema(
     name: { type: String, required: true },
     parent_id: { type: Number, required: true },
     img: { type: String, default: '' },
+    margin: { type: Number, default: 10 },
   },
   { versionKey: false, timestamps: true },
 );
