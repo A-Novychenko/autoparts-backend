@@ -43,9 +43,6 @@ const buildCategoryTree = (categories, parentId = 0) => {
 const updCmsCategoryMargin = async (req, res) => {
   const { id, margin } = req.body;
 
-  console.log('id:', id);
-  console.log('margin:', margin);
-
   // Знайти категорію за ID
   const category = await ASGCategory.findOne({ id });
 
