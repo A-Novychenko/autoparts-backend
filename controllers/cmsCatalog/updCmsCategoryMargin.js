@@ -40,7 +40,7 @@ const buildCategoryTree = (categories, parentId = 0) => {
   }));
 };
 
-const updCategoryMargin = async (req, res) => {
+const updCmsCategoryMargin = async (req, res) => {
   const { id, margin } = req.body;
 
   console.log('id:', id);
@@ -83,4 +83,4 @@ const updCategoryMargin = async (req, res) => {
   });
 };
 
-module.exports = updCategoryMargin;
+module.exports = updCmsCategoryMargin;

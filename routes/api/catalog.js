@@ -1,52 +1,29 @@
 const express = require('express');
 
 const {
-  getMainCategory,
-  getAllCategories,
-  getAllCategoriesWithMain,
+  getMainCategories,
+  getCategoriesByParentId,
   getCategory,
   getProducts,
   getProductsByTecDocArticle,
-  getCmsProductsByArticle,
-  addBanner,
-  getAllBanner,
 } = require('../../controllers/catalog');
-
-const { schemas } = require('../../models/asg/categories');
-const { schemasBanner } = require('../../models/banner');
-const { schemasProducts } = require('../../models/asg/products');
-
-const { validateBody } = require('../../decorators');
-const { authenticate } = require('../../middlewares');
 
 const router = express.Router();
 
-router.get('/', getMainCategory);
+//категории при рендере главной страницы сайта. Главные категории с parent_id=0
+router.get('/main-categories', getMainCategories);
 
-router.get('/category', getAllCategories); //byParentId
+//категории на странице [category]. Категорий которые принадлежат по parent_id
+router.get('/categories', getCategoriesByParentId); //byParentId
 
-router.get('/category-with-main', getAllCategoriesWithMain);
+//получения данных на странице открытой категории [product] о категории (имени) по id
+router.get('/category/:id', getCategory);
 
-router.post('/category', validateBody(schemas.getCategory), getCategory);
-
+//получение товаров на странице [category]/[page] ? id & page = 1 & limit = 20 & favorite?
+//id - это id категории к которой пренадлежат товары
 router.get('/products', getProducts);
 
+//поиск товаров на сайте
 router.post('/search-products', getProductsByTecDocArticle);
-
-router.post(
-  '/cms-search-products',
-  authenticate,
-  validateBody(schemasProducts.getCmsProduct),
-  getCmsProductsByArticle,
-);
-
-router.post(
-  '/banner',
-  authenticate,
-  validateBody(schemasBanner.addBanner),
-  addBanner,
-);
-
-router.get('/banner', getAllBanner);
 
 module.exports = router;

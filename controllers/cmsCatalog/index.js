@@ -2,10 +2,12 @@ const { ctrlWrap } = require('../../decorators');
 
 const getCmsAllCategories = require('./getCmsAllCategories');
 const getCmsProductsByCategory = require('./getCmsProductsByCategory');
-const updCategoryMargin = require('./updCategoryMargin');
+const updCmsCategoryMargin = require('./updCmsCategoryMargin');
+const getCmsProductsByArticle = require('./getCmsProductsByArticle');
 
 module.exports = {
   getCmsAllCategories: ctrlWrap(getCmsAllCategories),
   getCmsProductsByCategory: ctrlWrap(getCmsProductsByCategory),
-  updCategoryMargin: ctrlWrap(updCategoryMargin),
+  updCmsCategoryMargin: ctrlWrap(updCmsCategoryMargin),
+  getCmsProductsByArticle: ctrlWrap(getCmsProductsByArticle),
 };

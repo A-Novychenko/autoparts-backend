@@ -3,48 +3,33 @@ const express = require('express');
 const {
   getCmsAllCategories,
   getCmsProductsByCategory,
-  updCategoryMargin,
+  updCmsCategoryMargin,
+  getCmsProductsByArticle,
 } = require('../../controllers/cmsCatalog');
 
-// const { schemas } = require('../../models/asg/categories');
-// const { schemasBanner } = require('../../models/banner');
-// const { schemasProducts } = require('../../models/asg/products');
+const { schemasProducts } = require('../../models/asg/products');
 
-// const { validateBody } = require('../../decorators');
-// const { authenticate } = require('../../middlewares');
+const { authenticate } = require('../../middlewares');
+
+const { validateBody } = require('../../decorators');
 
 const router = express.Router();
 
+//получение всех категорий с вложенными (рекурсивно) админка
 router.get('/', getCmsAllCategories);
 
+//получение товаров по id категории в админке
 router.get('/products', getCmsProductsByCategory);
 
-router.put('/margin', updCategoryMargin);
+//изменение процента наценки в категории, используется в админке в категориях
+router.put('/margin', updCmsCategoryMargin);
 
-// router.get('/category', getAllCategories); //byParentId
-
-// router.get('/category-with-main', getAllCategoriesWithMain);
-
-// router.post('/category', validateBody(schemas.getCategory), getCategory);
-
-// router.get('/products', getProducts);
-
-// router.post('/search-products', getProductsByTecDocArticle);
-
-// router.post(
-//   '/cms-search-products',
-//   authenticate,
-//   validateBody(schemasProducts.getCmsProduct),
-//   getCmsProductsByArticle,
-// );
-
-// router.post(
-//   '/banner',
-//   authenticate,
-//   validateBody(schemasBanner.addBanner),
-//   addBanner,
-// );
-
-// router.get('/banner', getAllBanner);
+//поиск товаров в админке
+router.post(
+  '/search-products',
+  authenticate,
+  validateBody(schemasProducts.getCmsProduct),
+  getCmsProductsByArticle,
+);
 
 module.exports = router;

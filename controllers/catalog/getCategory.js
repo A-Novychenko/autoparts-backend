@@ -1,9 +1,17 @@
 const { ASGCategory } = require('../../models/asg/categories');
 
-const getCategory = async (req, res) => {
-  const { id } = req.body;
+const { HttpError } = require('../../helpers');
 
-  const categories = await ASGCategory.findOne({ id });
+const getCategory = async (req, res) => {
+  const { id } = req.params;
+
+  const idNumber = Number(id);
+
+  if (isNaN(idNumber)) {
+    throw HttpError(400);
+  }
+
+  const categories = await ASGCategory.findOne({ id: idNumber });
 
   res.json({
     status: 'OK',

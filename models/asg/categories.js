@@ -12,13 +12,7 @@ const ASGCategorySchema = new Schema(
   { versionKey: false, timestamps: true },
 );
 
-const getCategory = Joi.object({
-  id: Joi.number().required(),
-});
-
-const schemas = {
-  getCategory,
-};
+const schemas = {};
 
 const ASGCategory = model('ASGCategory', ASGCategorySchema);
 
