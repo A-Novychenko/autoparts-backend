@@ -3,6 +3,7 @@ const express = require('express');
 const {
   getCmsAllCategories,
   getCmsProductsByCategory,
+  updCategoryMargin,
 } = require('../../controllers/cmsCatalog');
 
 // const { schemas } = require('../../models/asg/categories');
@@ -15,7 +16,10 @@ const {
 const router = express.Router();
 
 router.get('/', getCmsAllCategories);
+
 router.get('/products', getCmsProductsByCategory);
+
+router.put('/margin', updCategoryMargin);
 
 // router.get('/category', getAllCategories); //byParentId
 
