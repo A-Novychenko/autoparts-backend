@@ -5,6 +5,7 @@ const {
   getCmsProductsByCategory,
   updCmsCategoryMargin,
   getCmsProductsByArticle,
+  updCmsProductBanner,
 } = require('../../controllers/cmsCatalog');
 
 const { schemasProducts } = require('../../models/asg/products');
@@ -31,5 +32,8 @@ router.post(
   validateBody(schemasProducts.getCmsProduct),
   getCmsProductsByArticle,
 );
+
+//включение/отключение товара в баннер
+router.put('/banner', updCmsProductBanner);
 
 module.exports = router;

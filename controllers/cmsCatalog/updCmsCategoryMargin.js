@@ -52,6 +52,7 @@ const updCmsCategoryMargin = async (req, res) => {
 
   // Отримати всі ID категорій, які потрібно оновити
   const categoryIds = await getAllCategoryIds(id);
+
   categoryIds.push(id); // Додаємо саму кореневу категорію
 
   // Оновити margin для всіх категорій одним запитом

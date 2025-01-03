@@ -16,6 +16,9 @@ const ASGProductSchema = new Schema(
     price_type_1_currency_980: { type: String, required: true },
     price_type_2_currency_980: { type: String, required: true },
     count_warehouse_3: { type: String, required: true },
+    banner: { type: Boolean, default: false, required: true },
+    sale: { type: Boolean, default: false, required: true },
+    price_promo: { type: String, default: null },
   },
   { versionKey: false, timestamps: true },
 );

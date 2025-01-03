@@ -6,6 +6,7 @@ const {
   getCategory,
   getProducts,
   getProductsByTecDocArticle,
+  getProductsBanner,
 } = require('../../controllers/catalog');
 
 const router = express.Router();
@@ -25,5 +26,8 @@ router.get('/products', getProducts);
 
 //поиск товаров на сайте
 router.post('/search-products', getProductsByTecDocArticle);
+
+//получение товаров для баннера
+router.get('/banner', getProductsBanner);
 
 module.exports = router;
