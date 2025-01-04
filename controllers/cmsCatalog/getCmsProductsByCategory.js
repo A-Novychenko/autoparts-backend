@@ -1,130 +1,63 @@
-const { ASGCategory } = require('../../models/asg/categories');
 const { ASGProduct } = require('../../models/asg/products');
 
+const { transformedProductsByCMS } = require('../../helpers');
+
 const getCmsProductsByCategory = async (req, res) => {
-  const { id, page = 1, limit = 20, favorite } = req.query;
+  const { id, page = 1, limit = 20 } = req.query;
   const skip = (page - 1) * limit;
 
-  const category = await ASGCategory.find({ id });
+  const category_id = parseInt(id, 10);
 
-  try {
-    // Формування фільтру
-    const filter = { category_id: parseInt(id, 10) };
-    if (favorite !== undefined) {
-      filter.favorite = favorite === 'true';
-    }
-
-    const inStockFilter = { ...filter, count_warehouse_3: { $ne: '0' } };
-    const outOfStockFilter = { ...filter, count_warehouse_3: '0' };
-
-    const inStockProducts = await ASGProduct.aggregate([
-      { $match: inStockFilter },
-      {
-        $lookup: {
-          from: 'asgimages',
-          localField: 'id',
-          foreignField: 'product_id',
-          as: 'images',
+  // Отримання та сортування товарів
+  const products = await ASGProduct.aggregate([
+    { $match: { category_id } },
+    {
+      $lookup: {
+        from: 'asgimages',
+        localField: 'id',
+        foreignField: 'product_id',
+        as: 'images',
+      },
+    },
+    {
+      $lookup: {
+        from: 'asgcategories',
+        localField: 'category_id',
+        foreignField: 'id',
+        as: 'categoryData',
+      },
+    },
+    {
+      $addFields: {
+        img: { $arrayElemAt: ['$images.images', 0] },
+        isInStock: {
+          $cond: [{ $ne: ['$count_warehouse_3', '0'] }, 1, 0], // Поле для сортування
+        },
+        margin: {
+          $ifNull: [{ $arrayElemAt: ['$categoryData.margin', 0] }, 10], // Значення за замовчуванням 10, якщо margin відсутній
         },
       },
-      {
-        $addFields: {
-          img: { $arrayElemAt: ['$images.images', 0] },
-        },
-      },
-      { $unset: 'images' },
-      { $skip: skip },
-      { $limit: limit },
-    ]);
+    },
+    { $unset: ['images', 'categoryData'] },
+    { $sort: { isInStock: -1, id: 1 } }, // Спочатку в наявності, потім за id
+    { $skip: skip },
+    { $limit: limit },
+  ]);
 
-    const remainingLimit = limit - inStockProducts.length;
-    let outOfStockProducts = [];
+  // Трансформування отриманих товарів
 
-    if (remainingLimit > 0) {
-      outOfStockProducts = await ASGProduct.aggregate([
-        { $match: outOfStockFilter },
-        {
-          $lookup: {
-            from: 'asgimages',
-            localField: 'id',
-            foreignField: 'product_id',
-            as: 'images',
-          },
-        },
-        {
-          $addFields: {
-            img: { $arrayElemAt: ['$images.images', 0] },
-          },
-        },
-        { $unset: 'images' },
-        { $skip: Math.max(0, skip - inStockProducts.length) },
-        { $limit: remainingLimit },
-      ]);
-    }
+  const transformedProducts = transformedProductsByCMS(products);
 
-    const products = [...inStockProducts, ...outOfStockProducts];
+  // Загальна кількість товарів
+  const totalProductsCount = await ASGProduct.countDocuments({ category_id });
+  const totalPages = Math.ceil(totalProductsCount / limit);
 
-    // Перетворюємо об'єкти
-    const transformedProducts = products.map(product => {
-      const marginValue = category && category?.margin ? category.margin : 10;
-      const margin = marginValue / 100;
-
-      const price_currency_980_to_number = parseFloat(
-        product.price_currency_980,
-      );
-
-      const price_client = Math.ceil(
-        price_currency_980_to_number + price_currency_980_to_number * margin,
-      );
-
-      return {
-        _id: product._id,
-        id: product.id,
-        cid: product.cid,
-
-        category: product.category,
-        category_id: product.category_id,
-
-        brand: product.brand,
-        article: product.article,
-        tecdoc_article: product.tecdoc_article,
-
-        name: product.name,
-        description: product.description,
-        img: product.img ? [...product.img] : [],
-        createdAt: product.createdAt,
-        updatedAt: product.updatedAt,
-
-        count_warehouse_3: product.count_warehouse_3,
-        price_supplier: product.price_currency_980,
-        price_client,
-        price_promo: product.price_promo,
-        banner: product.banner,
-        sale: product.sale,
-      };
-    });
-
-    const totalInStockCount = await ASGProduct.countDocuments(inStockFilter);
-    const totalOutOfStockCount =
-      await ASGProduct.countDocuments(outOfStockFilter);
-    const totalPages = Math.ceil(
-      (totalInStockCount + totalOutOfStockCount) / limit,
-    );
-
-    res.json({
-      status: 'OK',
-      code: 200,
-      products: transformedProducts,
-      totalPages,
-    });
-  } catch (error) {
-    console.error('Error fetching products:', error);
-    res.status(500).json({
-      status: 'error',
-      code: 500,
-      message: 'Failed to fetch products',
-    });
-  }
+  res.json({
+    status: 'OK',
+    code: 200,
+    products: transformedProducts,
+    totalPages,
+  });
 };
 
 module.exports = getCmsProductsByCategory;

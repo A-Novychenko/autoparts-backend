@@ -1,5 +1,7 @@
 const { ASGProduct } = require('../../models/asg/products');
 
+const { transformedProductsByCMS } = require('../../helpers');
+
 const getCmsProductsByArticle = async (req, res) => {
   const { article } = req.body;
 
@@ -29,24 +31,7 @@ const getCmsProductsByArticle = async (req, res) => {
     ]);
 
     // Перетворення об'єктів продуктів
-    const transformedProducts = products.map(product => ({
-      _id: product._id,
-      id: product.id,
-      cid: product.cid,
-      category: product.category,
-      category_id: product.category_id,
-      brand: product.brand,
-      article: product.article,
-      tecdoc_article: product.tecdoc_article,
-      name: product.name,
-      description: product.description,
-      price: Math.ceil(parseFloat(product.price_currency_980) * 1.1), // Перерахунок ціни
-      price_asg: parseFloat(product.price_currency_980),
-      count_warehouse_3: product.count_warehouse_3,
-      createdAt: product.createdAt,
-      updatedAt: product.updatedAt,
-      img: product.img ? [...product.img] : [], // Перетворення зображень
-    }));
+    const transformedProducts = transformedProductsByCMS(products);
 
     res.json({
       status: 'OK',

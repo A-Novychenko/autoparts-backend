@@ -36,8 +36,6 @@ const getCmsAllCategories = async (req, res) => {
     }),
   );
 
-  // console.log('categoriesWithChildren', categoriesWithChildren);
-
   res.json({
     status: 'OK',
     code: 200,
