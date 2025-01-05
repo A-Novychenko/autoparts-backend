@@ -6,6 +6,8 @@ const {
   updCmsCategoryMargin,
   getCmsProductsByArticle,
   updCmsProductBanner,
+  updCmsProductSale,
+  updCmsProductPricePromo,
 } = require('../../controllers/cmsCatalog');
 
 const { schemasProducts } = require('../../models/asg/products');
@@ -35,5 +37,11 @@ router.post(
 
 //включение/отключение товара в баннер
 router.put('/banner', updCmsProductBanner);
+
+//включение/отключение товара в распродажу/акции
+router.put('/sale', updCmsProductSale);
+
+//включение/отключение товара в распродажу/акции
+router.put('/price-promo', updCmsProductPricePromo);
 
 module.exports = router;
