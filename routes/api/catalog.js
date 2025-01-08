@@ -5,6 +5,7 @@ const {
   getCategoriesByParentId,
   getCategory,
   getProducts,
+  getProductsForCartByIds,
   getProductsByTecDocArticle,
   getProductsBanner,
 } = require('../../controllers/catalog');
@@ -23,6 +24,10 @@ router.get('/category/:id', getCategory);
 //получение товаров на странице [category]/[page] ? id & page = 1 & limit = 20 & favorite?
 //id - это id категории к которой пренадлежат товары
 router.get('/products', getProducts);
+
+//получение/обновление товаров в корзине /cart ? ids
+// ids - массив id товаров в корзине
+router.get('/products-cart-list', getProductsForCartByIds);
 
 //поиск товаров на сайте
 router.post('/search-products', getProductsByTecDocArticle);
