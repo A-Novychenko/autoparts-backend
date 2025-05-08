@@ -9,6 +9,7 @@ const { PORT = 3005, DB_HOST } = process.env;
 
 const authRouter = require('./routes/api/auth');
 const asgRouter = require('./routes/api/asg');
+const ordersRouter = require('./routes/api/orders');
 const catalogRouter = require('./routes/api/catalog');
 const cmsCatalogRouter = require('./routes/api/cmsCatalog');
 
@@ -22,6 +23,7 @@ app.use(express.json());
 
 app.use('/api/auth', authRouter);
 app.use('/api/asg', asgRouter);
+app.use('/api/orders', ordersRouter);
 app.use('/api/catalog', catalogRouter);
 app.use('/api/cms-catalog', cmsCatalogRouter);
 
