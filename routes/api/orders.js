@@ -5,6 +5,7 @@ const {
   getAllVinRequests,
   addVinRequest,
   getOneVinRequest,
+  updateVinRequests,
 } = require('../../controllers/orders');
 const { validateBody } = require('../../decorators');
 const { schemasVinRequest } = require('../../models/orders/vin-request');
@@ -18,6 +19,15 @@ router.post(
   '/add-vin-request',
   validateBody(schemasVinRequest.addVinRequestSchema),
   addVinRequest,
+);
+
+router.patch(
+  '/vin-requests/:id',
+  authenticate,
+  isAdmin,
+  isValidId,
+  // validateBody(),
+  updateVinRequests,
 );
 
 module.exports = router;
