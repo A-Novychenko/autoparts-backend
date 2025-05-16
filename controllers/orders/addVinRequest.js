@@ -6,6 +6,7 @@ const addVinRequest = async (req, res) => {
   res.status(201).json({
     status: 'created',
     code: 201,
+    data: result,
   });
 };
 
