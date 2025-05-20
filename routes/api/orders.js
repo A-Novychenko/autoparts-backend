@@ -6,9 +6,11 @@ const {
   addVinRequest,
   getOneVinRequest,
   updateVinRequests,
+  addOrder,
 } = require('../../controllers/orders');
 const { validateBody } = require('../../decorators');
 const { schemasVinRequest } = require('../../models/orders/vin-request');
+const { schemasOrder } = require('../../models/orders/order');
 
 const router = express.Router();
 
@@ -29,5 +31,7 @@ router.patch(
   // validateBody(),
   updateVinRequests,
 );
+
+router.post('/add-order', validateBody(schemasOrder.addOrderSchema), addOrder);
 
 module.exports = router;
