@@ -7,6 +7,8 @@ const {
   getOneVinRequest,
   updateVinRequests,
   addOrder,
+  getAllOrders,
+  getOneOrder,
 } = require('../../controllers/orders');
 const { validateBody } = require('../../decorators');
 const { schemasVinRequest } = require('../../models/orders/vin-request');
@@ -14,8 +16,10 @@ const { schemasOrder } = require('../../models/orders/order');
 
 const router = express.Router();
 
+router.get('/', getAllOrders);
 router.get('/vin-requests', getAllVinRequests);
 router.get('/vin-requests/:id', isValidId, getOneVinRequest);
+router.get('/:id', isValidId, getOneOrder);
 
 router.post(
   '/add-vin-request',

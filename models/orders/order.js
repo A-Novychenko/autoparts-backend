@@ -6,36 +6,52 @@ const OrderCounter = require('./orderCounter'); // Підключаємо мод
 
 const orderSchema = new Schema(
   {
-    vinCode: {
+    name: {
       type: String,
-      min: [17, 'vinCode must have minimum 17 characters'],
-      max: [17, 'vinCode must have minimum 17 characters'],
-      required: [true, 'Set VINCODE !'],
+      required: [true, 'Set name !'],
     },
-    name: { type: String, default: '' },
-    brand: { type: String, default: '' },
-    model: { type: String, default: '' },
-    engine: { type: String, default: '' },
-    fuel: { type: String, default: '' },
-    year: { type: String, default: '' },
     phone: {
       type: String,
       required: [true, 'Set phone !'],
     },
-    message: { type: String, default: '' },
-
+    email: { type: String, default: '' },
+    comment: { type: String, default: '' },
+    delivery: {
+      type: String,
+      enum: ['pickup', 'post'],
+      default: 'pickup',
+    },
+    deliveryCity: { type: String, default: '' },
+    postOffice: { type: String, default: '' },
+    payment: {
+      type: String,
+      enum: ['card', 'cash', 'prepayment', 'cod'],
+      default: 'card',
+    },
+    products: {
+      type: [
+        {
+          id: { type: Number, required: true },
+          article: { type: String, required: true },
+          name: { type: String, required: true },
+          img: { type: String, default: '' },
+          price: { type: Number, required: true },
+          price_promo: { type: Number, default: null },
+          quantity: { type: Number, required: true },
+          availability: { type: String, required: true },
+        },
+      ],
+      default: [],
+    },
     number: {
       type: String,
       default: '',
     },
-
     status: {
       type: String,
       enum: ['new', 'inprogress', 'rejected', 'done'],
       default: 'new',
     },
-
-    comment: { type: String, default: '' },
   },
   { versionKey: false, timestamps: true },
 );
@@ -63,35 +79,65 @@ orderSchema.pre('save', async function (next) {
 orderSchema.post('save', handleMongooseError);
 
 const addOrderSchema = Joi.object({
-  vinCode: Joi.string()
-    .length(17)
-    .pattern(/^[A-HJ-NPR-Z0-9]{17}$/i)
-    .required()
-    .messages({
-      'string.length': 'VIN-код має містити рівно 17 символів',
-      'string.pattern.base':
-        'VIN-код може містити лише латинські літери та цифри',
-    }),
-
-  phone: Joi.string().min(5).max(25).required().messages({
-    'string.min': 'Телефон має містити щонайменше 5 символів',
-    'string.max': 'Телефон має містити не більше 25 символів',
+  name: Joi.string().min(1).required().messages({
+    'any.required': 'Name is required',
+    'string.empty': 'The name cannot be empty',
   }),
 
-  name: Joi.string().allow('').optional(),
-  brand: Joi.string().allow('').optional(),
-  model: Joi.string().allow('').optional(),
-  engine: Joi.string().allow('').optional(),
-  fuel: Joi.string().allow('').optional(),
-  year: Joi.string().allow('').optional(),
-  message: Joi.string().allow('').optional(),
+  phone: Joi.string().min(5).max(25).required().messages({
+    'string.min': 'The phone number must contain at least 5 characters',
+    'string.max': 'ТThe phone number must contain no more than 25 characters',
+    'any.required': 'Phone is required',
+  }),
 
-  //   //   status: Joi.string()
-  //   //     .valid('new', 'inprogress', 'rejected', 'done')
-  //   //     .optional()
-  //   //     .messages({
-  //   //       'any.only': 'Неприпустиме значення статусу',
-  //   //     }),
+  email: Joi.string().email().allow('').optional(),
+
+  comment: Joi.string().allow('').optional(),
+
+  delivery: Joi.string().valid('pickup', 'post').required().messages({
+    'any.only': 'The delivery method must be “pickup” or “post”',
+    'any.required': 'Choose a delivery method',
+  }),
+
+  deliveryCity: Joi.string().allow('').optional(),
+
+  postOffice: Joi.string().allow('').optional(),
+
+  payment: Joi.string()
+    .valid('card', 'cash', 'prepayment', 'cod')
+    .required()
+    .messages({
+      'any.only':
+        'The payment method must be one of the following: “card”, "cash", "prepayment", ”cod”',
+      'any.required': 'Choose a payment method',
+    }),
+
+  number: Joi.string().allow('').optional(),
+
+  status: Joi.string()
+    .valid('new', 'inprogress', 'rejected', 'done')
+    .optional(),
+
+  products: Joi.array()
+    .items(
+      Joi.object({
+        id: Joi.number().required(),
+        article: Joi.string().required(),
+        name: Joi.string().required(),
+        img: Joi.string().uri().allow('').optional(),
+        price: Joi.number().required(),
+        price_promo: Joi.number().allow(null).optional(),
+        quantity: Joi.number().required(),
+        availability: Joi.string().allow('').optional(),
+      }),
+    )
+    .min(1)
+    .required()
+    .messages({
+      'array.base': 'The products field must be an array',
+      'array.min': 'There must be at least one product in the order',
+      'any.required': 'The list of goods is required',
+    }),
 });
 
 const schemasOrder = {
