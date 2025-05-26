@@ -7,6 +7,7 @@ const updateVinRequests = require('./updateVinRequests');
 const addOrder = require('./addOrder');
 const getAllOrders = require('./getAllOrders');
 const getOneOrder = require('./getOneOrder');
+const getOrderStatus = require('./getOrderStatus');
 
 module.exports = {
   getAllVinRequests: ctrlWrap(getAllVinRequests),
@@ -16,4 +17,5 @@ module.exports = {
   addOrder: ctrlWrap(addOrder),
   getAllOrders: ctrlWrap(getAllOrders),
   getOneOrder: ctrlWrap(getOneOrder),
+  getOrderStatus: ctrlWrap(getOrderStatus),
 };

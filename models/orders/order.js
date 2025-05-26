@@ -124,7 +124,7 @@ const addOrderSchema = Joi.object({
         id: Joi.number().required(),
         article: Joi.string().required(),
         name: Joi.string().required(),
-        img: Joi.string().uri().allow('').optional(),
+        img: Joi.string().optional(),
         price: Joi.number().required(),
         price_promo: Joi.number().allow(null).optional(),
         quantity: Joi.number().required(),

@@ -9,6 +9,7 @@ const {
   addOrder,
   getAllOrders,
   getOneOrder,
+  getOrderStatus,
 } = require('../../controllers/orders');
 const { validateBody } = require('../../decorators');
 const { schemasVinRequest } = require('../../models/orders/vin-request');
@@ -17,6 +18,7 @@ const { schemasOrder } = require('../../models/orders/order');
 const router = express.Router();
 
 router.get('/', getAllOrders);
+router.get('/status/:id', isValidId, getOrderStatus);
 router.get('/vin-requests', getAllVinRequests);
 router.get('/vin-requests/:id', isValidId, getOneVinRequest);
 router.get('/:id', isValidId, getOneOrder);
