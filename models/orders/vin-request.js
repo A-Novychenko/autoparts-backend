@@ -31,7 +31,7 @@ const vinRequestSchema = new Schema(
 
     status: {
       type: String,
-      enum: ['new', 'inprogress', 'rejected', 'done'],
+      enum: ['new', 'in-progress', 'rejected', 'done'],
       default: 'new',
     },
 
@@ -87,7 +87,7 @@ const addVinRequestSchema = Joi.object({
   message: Joi.string().allow('').optional(),
 
   //   //   status: Joi.string()
-  //   //     .valid('new', 'inprogress', 'rejected', 'done')
+  //   //     .valid('new', 'in-progress', 'rejected', 'done')
   //   //     .optional()
   //   //     .messages({
   //   //       'any.only': 'Неприпустиме значення статусу',

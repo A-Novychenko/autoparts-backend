@@ -15,6 +15,7 @@ const orderSchema = new Schema(
       required: [true, 'Set phone !'],
     },
     email: { type: String, default: '' },
+    message: { type: String, default: '' },
     comment: { type: String, default: '' },
     delivery: {
       type: String,
@@ -49,7 +50,7 @@ const orderSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ['new', 'inprogress', 'rejected', 'done'],
+      enum: ['new', 'in-progress', 'rejected', 'done'],
       default: 'new',
     },
   },
@@ -92,7 +93,7 @@ const addOrderSchema = Joi.object({
 
   email: Joi.string().email().allow('').optional(),
 
-  comment: Joi.string().allow('').optional(),
+  message: Joi.string().allow('').optional(),
 
   delivery: Joi.string().valid('pickup', 'post').required().messages({
     'any.only': 'The delivery method must be “pickup” or “post”',
@@ -115,7 +116,7 @@ const addOrderSchema = Joi.object({
   number: Joi.string().allow('').optional(),
 
   status: Joi.string()
-    .valid('new', 'inprogress', 'rejected', 'done')
+    .valid('new', 'in-progress', 'rejected', 'done')
     .optional(),
 
   products: Joi.array()
@@ -140,8 +141,16 @@ const addOrderSchema = Joi.object({
     }),
 });
 
+const updateOrderSchema = Joi.object({
+  status: Joi.string()
+    .valid('new', 'in-progress', 'rejected', 'done')
+    .optional(),
+  comment: Joi.string().allow('').optional(),
+});
+
 const schemasOrder = {
   addOrderSchema,
+  updateOrderSchema,
 };
 
 const Order = model('order', orderSchema);

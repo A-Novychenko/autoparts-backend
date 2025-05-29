@@ -10,6 +10,7 @@ const {
   getAllOrders,
   getOneOrder,
   getOrderStatus,
+  updateOrder,
 } = require('../../controllers/orders');
 const { validateBody } = require('../../decorators');
 const { schemasVinRequest } = require('../../models/orders/vin-request');
@@ -36,6 +37,15 @@ router.patch(
   isValidId,
   // validateBody(),
   updateVinRequests,
+);
+
+router.patch(
+  '/:id',
+  authenticate,
+  isAdmin,
+  isValidId,
+  validateBody(schemasOrder.updateOrderSchema),
+  updateOrder,
 );
 
 router.post('/add-order', validateBody(schemasOrder.addOrderSchema), addOrder);
