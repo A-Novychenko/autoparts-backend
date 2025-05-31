@@ -9,6 +9,9 @@ const getAllOrders = require('./getAllOrders');
 const getOneOrder = require('./getOneOrder');
 const getOrderStatus = require('./getOrderStatus');
 const updateOrder = require('./updateOrder');
+const addCallback = require('./addCallback');
+const getAllCallback = require('./getAllCallback');
+const updateCallback = require('./updateCallback');
 
 module.exports = {
   getAllVinRequests: ctrlWrap(getAllVinRequests),
@@ -20,4 +23,7 @@ module.exports = {
   getOneOrder: ctrlWrap(getOneOrder),
   getOrderStatus: ctrlWrap(getOrderStatus),
   updateOrder: ctrlWrap(updateOrder),
+  addCallback: ctrlWrap(addCallback),
+  getAllCallback: ctrlWrap(getAllCallback),
+  updateCallback: ctrlWrap(updateCallback),
 };

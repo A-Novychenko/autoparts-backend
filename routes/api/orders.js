@@ -11,43 +11,58 @@ const {
   getOneOrder,
   getOrderStatus,
   updateOrder,
+  addCallback,
+  getAllCallback,
+  updateCallback,
 } = require('../../controllers/orders');
 const { validateBody } = require('../../decorators');
 const { schemasVinRequest } = require('../../models/orders/vin-request');
 const { schemasOrder } = require('../../models/orders/order');
+const { schemasCallback } = require('../../models/orders/callback');
 
 const router = express.Router();
 
 router.get('/', getAllOrders);
-router.get('/status/:id', isValidId, getOrderStatus);
-router.get('/vin-requests', getAllVinRequests);
-router.get('/vin-requests/:id', isValidId, getOneVinRequest);
-router.get('/:id', isValidId, getOneOrder);
+router.post('/add-order', validateBody(schemasOrder.addOrderSchema), addOrder);
 
+router.get('/vin-requests', getAllVinRequests);
 router.post(
   '/add-vin-request',
   validateBody(schemasVinRequest.addVinRequestSchema),
   addVinRequest,
 );
 
+router.get('/callback', getAllCallback);
+router.post(
+  '/add-callback',
+  validateBody(schemasCallback.addCallbackSchema),
+  addCallback,
+);
+
+router.get('/:id', isValidId, getOneOrder);
+router.get('/status/:id', isValidId, getOrderStatus);
+router.patch(
+  '/:id',
+  authenticate,
+  isValidId,
+  validateBody(schemasOrder.updateOrderSchema),
+  updateOrder,
+);
+
+router.get('/vin-requests/:id', isValidId, getOneVinRequest);
 router.patch(
   '/vin-requests/:id',
-  authenticate,
-  isAdmin,
   isValidId,
   // validateBody(),
   updateVinRequests,
 );
 
 router.patch(
-  '/:id',
+  '/callback/:id',
   authenticate,
-  isAdmin,
   isValidId,
-  validateBody(schemasOrder.updateOrderSchema),
-  updateOrder,
+  validateBody(schemasCallback.updateCallbackSchema),
+  updateCallback,
 );
-
-router.post('/add-order', validateBody(schemasOrder.addOrderSchema), addOrder);
 
 module.exports = router;
