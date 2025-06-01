@@ -7,6 +7,7 @@ const getProducts = require('./getProducts');
 const getProductsForCartByIds = require('./getProductsForCartByIds');
 const getProductsByTecDocArticle = require('./getProductsByTecDocArticle');
 const getProductsBanner = require('./getProductsBanner');
+const getOneProduct = require('./getOneProduct');
 
 module.exports = {
   getMainCategories: ctrlWrap(getMainCategories),
@@ -16,4 +17,5 @@ module.exports = {
   getProductsForCartByIds: ctrlWrap(getProductsForCartByIds),
   getProductsByTecDocArticle: ctrlWrap(getProductsByTecDocArticle),
   getProductsBanner: ctrlWrap(getProductsBanner),
+  getOneProduct: ctrlWrap(getOneProduct),
 };

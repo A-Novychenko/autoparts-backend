@@ -8,7 +8,9 @@ const {
   getProductsForCartByIds,
   getProductsByTecDocArticle,
   getProductsBanner,
+  getOneProduct,
 } = require('../../controllers/catalog');
+const { isValidId } = require('../../middlewares');
 
 const router = express.Router();
 
@@ -34,5 +36,8 @@ router.post('/search-products', getProductsByTecDocArticle);
 
 //получение товаров для баннера
 router.get('/banner', getProductsBanner);
+
+//получение товаров для баннера
+router.get('/single-product/:id', isValidId, getOneProduct);
 
 module.exports = router;
