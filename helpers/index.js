@@ -5,6 +5,7 @@ const createErrorReq = require('./createErrorReq');
 const serviceASG = require('./serviceASG');
 const sendTg = require('./sendTg');
 const sendEmail = require('./sendEmail');
+const serviceCaptcha = require('./serviceCaptcha');
 const transformedProductsByCMS = require('./transformedProductsByCMS');
 const transformedProductsBySite = require('./transformedProductsBySite');
 const formatDateToUkrainian = require('./formatDateToUkrainian');
@@ -17,6 +18,7 @@ module.exports = {
   serviceASG,
   sendTg,
   sendEmail,
+  serviceCaptcha,
   transformedProductsByCMS,
   transformedProductsBySite,
   formatDateToUkrainian,

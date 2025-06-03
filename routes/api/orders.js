@@ -1,6 +1,11 @@
 const express = require('express');
 
-const { authenticate, isAdmin, isValidId } = require('../../middlewares');
+const {
+  authenticate,
+  isAdmin,
+  isValidId,
+  recaptcha,
+} = require('../../middlewares');
 const {
   getAllVinRequests,
   addVinRequest,
@@ -23,7 +28,12 @@ const { schemasCallback } = require('../../models/orders/callback');
 const router = express.Router();
 
 router.get('/', getAllOrders);
-router.post('/add-order', validateBody(schemasOrder.addOrderSchema), addOrder);
+router.post(
+  '/add-order',
+  recaptcha,
+  validateBody(schemasOrder.addOrderSchema),
+  addOrder,
+);
 
 router.get('/vin-requests', getAllVinRequests);
 router.post(

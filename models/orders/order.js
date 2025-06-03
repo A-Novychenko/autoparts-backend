@@ -139,6 +139,7 @@ const addOrderSchema = Joi.object({
       'array.min': 'There must be at least one product in the order',
       'any.required': 'The list of goods is required',
     }),
+  captchaToken: Joi.string().allow('').optional(),
 });
 
 const updateOrderSchema = Joi.object({
