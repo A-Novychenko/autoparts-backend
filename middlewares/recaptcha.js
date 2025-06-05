@@ -6,6 +6,7 @@ const recaptcha = async (req, res, next) => {
   try {
     const { data } = await serviceCaptcha(captchaToken);
 
+    // if (data.success) {
     if (!data.success) {
       //Сообщение если и коректировать то здесь и компоненте "Cart" на основном сайте в хендлсабмит
       next(HttpError(400, 'Captcha verification failed'));

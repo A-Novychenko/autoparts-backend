@@ -38,6 +38,7 @@ router.post(
 router.get('/vin-requests', getAllVinRequests);
 router.post(
   '/add-vin-request',
+  recaptcha,
   validateBody(schemasVinRequest.addVinRequestSchema),
   addVinRequest,
 );

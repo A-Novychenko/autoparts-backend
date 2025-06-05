@@ -85,13 +85,7 @@ const addVinRequestSchema = Joi.object({
   fuel: Joi.string().allow('').optional(),
   year: Joi.string().allow('').optional(),
   message: Joi.string().allow('').optional(),
-
-  //   //   status: Joi.string()
-  //   //     .valid('new', 'in-progress', 'rejected', 'done')
-  //   //     .optional()
-  //   //     .messages({
-  //   //       'any.only': 'Неприпустиме значення статусу',
-  //   //     }),
+  captchaToken: Joi.string().allow('').optional(),
 });
 
 const schemasVinRequest = {
