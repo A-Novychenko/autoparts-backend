@@ -11,12 +11,27 @@ const getCategory = async (req, res) => {
     throw HttpError(400);
   }
 
-  const categories = await ASGCategory.findOne({ id: idNumber });
+  const result = await ASGCategory.findOne({ id: idNumber });
+
+  if (!result) throw HttpError(404);
+
+  const resultParentCat = await ASGCategory.findOne({ id: result.parent_id });
+
+  // if (!resultParentCat) throw HttpError(404);
+
+  const category = {
+    id: result.id,
+    parentId: result.parent_id,
+    name: result.name,
+    parentName: resultParentCat?.name,
+  };
+
+  console.log('category', category);
 
   res.json({
     status: 'OK',
     code: 200,
-    categories,
+    category,
   });
 };
 
