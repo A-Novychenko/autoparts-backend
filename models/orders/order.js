@@ -32,8 +32,13 @@ const orderSchema = new Schema(
     products: {
       type: [
         {
+          _id: {
+            type: Schema.Types.ObjectId,
+            required: true,
+          },
           id: { type: Number, required: true },
           article: { type: String, required: true },
+          brand: { type: String, required: true },
           name: { type: String, required: true },
           img: { type: String, default: '' },
           price: { type: Number, required: true },
@@ -122,8 +127,10 @@ const addOrderSchema = Joi.object({
   products: Joi.array()
     .items(
       Joi.object({
+        _id: Joi.string().required(),
         id: Joi.number().required(),
         article: Joi.string().required(),
+        brand: Joi.string().required(),
         name: Joi.string().required(),
         img: Joi.string().optional(),
         price: Joi.number().required(),
