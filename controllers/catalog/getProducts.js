@@ -4,7 +4,11 @@ const { transformedProductsBySite } = require('../../helpers');
 
 const getProducts = async (req, res) => {
   const { id, page = 1, limit = 20 } = req.query;
-  const skip = (page - 1) * limit;
+
+  const numericLimit = parseInt(limit, 10);
+  const numericPage = parseInt(page, 10);
+
+  const skip = (numericPage - 1) * numericLimit;
 
   const category_id = parseInt(id, 10);
 
@@ -41,7 +45,7 @@ const getProducts = async (req, res) => {
     { $unset: ['images', 'categoryData'] },
     { $sort: { isInStock: -1, id: 1 } }, // Спочатку в наявності, потім за id
     { $skip: skip },
-    { $limit: limit },
+    { $limit: numericLimit },
   ]);
 
   // Перетворюємо об'єкти

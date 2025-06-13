@@ -9,6 +9,8 @@ const serviceCaptcha = require('./serviceCaptcha');
 const transformedProductsByCMS = require('./transformedProductsByCMS');
 const transformedProductsBySite = require('./transformedProductsBySite');
 const formatDateToUkrainian = require('./formatDateToUkrainian');
+const generateSlugName = require('./generateSlugName');
+const generateProductPath = require('./generateProductPath');
 
 module.exports = {
   HttpError,
@@ -22,4 +24,6 @@ module.exports = {
   transformedProductsByCMS,
   transformedProductsBySite,
   formatDateToUkrainian,
+  generateSlugName,
+  generateProductPath,
 };

@@ -9,6 +9,8 @@ const {
   getProductsByTecDocArticle,
   getProductsBanner,
   getOneProduct,
+  getSitemap,
+  getTotalProducts,
 } = require('../../controllers/catalog');
 const { isValidId } = require('../../middlewares');
 
@@ -39,5 +41,11 @@ router.get('/banner', getProductsBanner);
 
 //получение товаров для баннера
 router.get('/single-product/:id', isValidId, getOneProduct);
+
+//получение sitemap (test)
+router.get('/sitemap', getSitemap);
+
+//получение sitemap (test)
+router.get('/products-total', getTotalProducts);
 
 module.exports = router;

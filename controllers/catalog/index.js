@@ -8,6 +8,8 @@ const getProductsForCartByIds = require('./getProductsForCartByIds');
 const getProductsByTecDocArticle = require('./getProductsByTecDocArticle');
 const getProductsBanner = require('./getProductsBanner');
 const getOneProduct = require('./getOneProduct');
+const getSitemap = require('./getSitemap');
+const getTotalProducts = require('./getTotalProducts');
 
 module.exports = {
   getMainCategories: ctrlWrap(getMainCategories),
@@ -18,4 +20,6 @@ module.exports = {
   getProductsByTecDocArticle: ctrlWrap(getProductsByTecDocArticle),
   getProductsBanner: ctrlWrap(getProductsBanner),
   getOneProduct: ctrlWrap(getOneProduct),
+  getSitemap: ctrlWrap(getSitemap),
+  getTotalProducts: ctrlWrap(getTotalProducts),
 };

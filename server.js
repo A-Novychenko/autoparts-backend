@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const logger = require('morgan');
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -26,6 +27,7 @@ app.use('/api/asg', asgRouter);
 app.use('/api/orders', ordersRouter);
 app.use('/api/catalog', catalogRouter);
 app.use('/api/cms-catalog', cmsCatalogRouter);
+app.use('/sitemaps', express.static(path.join(__dirname, 'public/sitemaps')));
 
 app.use((_, res, __) => {
   res.status(404).json({
