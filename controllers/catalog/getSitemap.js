@@ -173,6 +173,9 @@ const getSitemap = async (req, res) => {
     .filter(f => f.startsWith('sitemap-') && f.endsWith('.xml'))
     .forEach(f => fs.unlinkSync(path.join(SITEMAP_DIR, f)));
 
+  const indexPath = path.join(SITEMAP_DIR, 'sitemap-index.xml');
+  if (fs.existsSync(indexPath)) fs.unlinkSync(indexPath);
+
   const sitemapFiles = chunks.map((chunk, i) => {
     const filename = `sitemap-${i + 1}.xml`;
     const xml = generateSitemapXml(chunk, baseUrl, lastMod);
