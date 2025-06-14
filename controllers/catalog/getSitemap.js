@@ -155,7 +155,7 @@ ${sitemapFiles.map(file => `  <sitemap><loc>${baseUrl}/sitemaps/${file}</loc><la
 };
 
 const getSitemap = async (req, res) => {
-  const baseUrl = process.env.MAIN_SITE_URL || 'http://localhost:3000';
+  const baseUrl = process.env.MAIN_SITE_URL;
   const lastMod = new Date().toISOString();
 
   const staticUrls = BASE_PATHS;
