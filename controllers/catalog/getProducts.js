@@ -1,65 +1,106 @@
 const { ASGProduct } = require('../../models/asg/products');
-
 const { transformedProductsBySite } = require('../../helpers');
 
+const totalPagesCache = new Map();
+
 const getProducts = async (req, res) => {
-  const { id, page = 1, limit = 20 } = req.query;
+  try {
+    const { id, page = 1, limit = 20 } = req.query;
 
-  const numericLimit = parseInt(limit, 10);
-  const numericPage = parseInt(page, 10);
+    const numericLimit = Math.max(1, parseInt(limit, 10));
+    const numericPage = Math.max(1, parseInt(page, 10));
+    const category_id = parseInt(id, 10);
 
-  const skip = (numericPage - 1) * numericLimit;
+    if (isNaN(category_id)) {
+      return res.status(400).json({
+        status: 'error',
+        code: 400,
+        message: 'Invalid category ID',
+      });
+    }
 
-  const category_id = parseInt(id, 10);
+    const skip = (numericPage - 1) * numericLimit;
+    const cacheKey = `${category_id}:${numericLimit}`;
+    let totalProductsCount;
+    let totalPages;
 
-  // Отримання та сортування товарів
-  const products = await ASGProduct.aggregate([
-    { $match: { category_id } },
-    {
-      $lookup: {
-        from: 'asgimages',
-        localField: 'id',
-        foreignField: 'product_id',
-        as: 'images',
-      },
-    },
-    {
-      $lookup: {
-        from: 'asgcategories',
-        localField: 'category_id',
-        foreignField: 'id',
-        as: 'categoryData',
-      },
-    },
-    {
-      $addFields: {
-        img: { $arrayElemAt: ['$images.images', 0] },
-        isInStock: {
-          $cond: [{ $ne: ['$count_warehouse_3', '0'] }, 1, 0], // Поле для сортування
+    if (totalPagesCache.has(cacheKey)) {
+      const cached = totalPagesCache.get(cacheKey);
+      totalProductsCount = cached.count;
+      totalPages = cached.pages;
+    } else {
+      totalProductsCount = await ASGProduct.countDocuments({ category_id });
+      totalPages = Math.max(1, Math.ceil(totalProductsCount / numericLimit));
+      totalPagesCache.set(cacheKey, {
+        count: totalProductsCount,
+        pages: totalPages,
+      });
+      setTimeout(() => totalPagesCache.delete(cacheKey), 5 * 60 * 1000);
+    }
+
+    console.log(
+      `[getProducts] category_id=${category_id}, page=${numericPage}, skip=${skip}`,
+    );
+
+    const isHighPage = numericPage > 1000;
+
+    const pipeline = [
+      { $match: { category_id } },
+      {
+        $addFields: {
+          isInStock: { $cond: [{ $ne: ['$count_warehouse_3', '0'] }, 1, 0] },
         },
-        margin: {
-          $ifNull: [{ $arrayElemAt: ['$categoryData.margin', 0] }, 10], // Значення за замовчуванням 10, якщо margin відсутній
+      },
+      ...(isHighPage ? [] : [{ $sort: { isInStock: -1, id: 1 } }]),
+      { $skip: skip },
+      { $limit: numericLimit },
+      {
+        $lookup: {
+          from: 'asgimages',
+          localField: 'id',
+          foreignField: 'product_id',
+          as: 'images',
         },
       },
-    },
-    { $unset: ['images', 'categoryData'] },
-    { $sort: { isInStock: -1, id: 1 } }, // Спочатку в наявності, потім за id
-    { $skip: skip },
-    { $limit: numericLimit },
-  ]);
+      {
+        $lookup: {
+          from: 'asgcategories',
+          localField: 'category_id',
+          foreignField: 'id',
+          as: 'categoryData',
+        },
+      },
+      {
+        $addFields: {
+          img: { $arrayElemAt: ['$images.images', 0] },
+          margin: {
+            $ifNull: [{ $arrayElemAt: ['$categoryData.margin', 0] }, 10],
+          },
+        },
+      },
+      { $unset: ['images', 'categoryData'] },
+    ];
 
-  // Перетворюємо об'єкти
-  const transformedProducts = transformedProductsBySite(products);
+    const products = await ASGProduct.aggregate(pipeline, {
+      allowDiskUse: true, // 💡 ВАЖЛИВО: Ось правильне місце
+    });
 
-  const totalProductsCount = await ASGProduct.countDocuments({ category_id });
-  const totalPages = Math.ceil(totalProductsCount / limit);
+    const transformedProducts = transformedProductsBySite(products);
 
-  res.json({
-    status: 'OK',
-    code: 200,
-    products: transformedProducts,
-    totalPages,
-  });
+    return res.status(200).json({
+      status: 'OK',
+      code: 200,
+      products: transformedProducts,
+      totalPages,
+    });
+  } catch (error) {
+    console.error('[getProducts error]:', error);
+    return res.status(500).json({
+      status: 'error',
+      code: 500,
+      message: 'Server error',
+    });
+  }
 };
 
 module.exports = getProducts;
