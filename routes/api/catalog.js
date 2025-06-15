@@ -12,7 +12,7 @@ const {
   getSitemap,
   getTotalProducts,
 } = require('../../controllers/catalog');
-const { isValidId } = require('../../middlewares');
+const { isValidId, authenticate, isAdmin } = require('../../middlewares');
 
 const router = express.Router();
 
@@ -43,7 +43,7 @@ router.get('/banner', getProductsBanner);
 router.get('/single-product/:id', isValidId, getOneProduct);
 
 //получение sitemap (test)
-router.get('/sitemap', getSitemap);
+router.post('/sitemap', authenticate, isAdmin, getSitemap);
 
 //получение sitemap (test)
 router.get('/products-total', getTotalProducts);
