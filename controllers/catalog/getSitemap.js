@@ -6,12 +6,40 @@ const { ASGProduct } = require('../../models/asg/products');
 
 const BASE_PATHS = [
   { loc: '', changefreq: 'weekly', priority: '1.0' },
-  { loc: '/cart', changefreq: 'monthly', priority: '0.3' },
-  { loc: '/checkout', changefreq: 'monthly', priority: '0.4' },
-  { loc: '/checkout/result', changefreq: 'monthly', priority: '0.4' },
-  { loc: '/search-products', changefreq: 'daily', priority: '0.6' },
   { loc: '/vin-request', changefreq: 'monthly', priority: '0.5' },
 ];
+
+const fetchSearchUrls = () => {
+  const popularQueries = [
+    'CASTROL MAGNATEC 5W-40',
+    'CASTROL',
+    'гальмівні колодки',
+    'фільтр',
+    'амортизатор',
+    'свічки запалювання',
+    'акумулятор',
+    'зчеплення',
+    'стартер',
+    'генератор',
+    'паливний насос',
+    'турбіна',
+    'радіатор охолодження',
+    'гальмівний диск',
+    'тяга рульова',
+    'шрус',
+    'підшипник ступиці',
+    'лампа фари',
+    'термостат',
+    'склоочисники',
+    'антифриз',
+  ];
+
+  return popularQueries.map(query => ({
+    loc: `/search-products/grid/${encodeURIComponent(query.toUpperCase())}`,
+    changefreq: 'weekly',
+    priority: '0.6',
+  }));
+};
 
 const ITEMS_PER_PAGE = 20;
 const ITEMS_PER_BATCH = 1000;
@@ -161,8 +189,14 @@ const getSitemap = async (req, res) => {
   const staticUrls = BASE_PATHS;
   const categoryUrls = await fetchCategoriesPaths();
   const productUrls = await fetchProductPaths();
+  const searchUrls = fetchSearchUrls();
 
-  const allUrls = [...staticUrls, ...categoryUrls, ...productUrls];
+  const allUrls = [
+    ...staticUrls,
+    ...categoryUrls,
+    ...productUrls,
+    ...searchUrls,
+  ];
   console.log(`Всего URL для sitemap: ${allUrls.length}`);
 
   const chunks = chunkArray(allUrls, MAX_URLS_PER_SITEMAP);
@@ -184,6 +218,7 @@ const getSitemap = async (req, res) => {
   console.log('Сгенерирован индексный sitemap-index.xml');
   console.log('----------------------------------');
   console.log(`Файлов sitemap: ${sitemapFiles.length}`);
+  console.log(`Поисковых URL: ${searchUrls.length}`);
   console.log(`Общее количество URL: ${allUrls.length}`);
   console.log('----------------------------------');
 

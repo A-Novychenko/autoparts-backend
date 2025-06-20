@@ -5,7 +5,7 @@ const getCategoriesByParentId = require('./getCategoriesByParentId');
 const getCategory = require('./getCategory');
 const getProducts = require('./getProducts');
 const getProductsForCartByIds = require('./getProductsForCartByIds');
-const getProductsByTecDocArticle = require('./getProductsByTecDocArticle');
+const searchProducts = require('./searchProducts');
 const getProductsBanner = require('./getProductsBanner');
 const getOneProduct = require('./getOneProduct');
 const getSitemap = require('./getSitemap');
@@ -17,7 +17,7 @@ module.exports = {
   getCategory: ctrlWrap(getCategory),
   getProducts: ctrlWrap(getProducts),
   getProductsForCartByIds: ctrlWrap(getProductsForCartByIds),
-  getProductsByTecDocArticle: ctrlWrap(getProductsByTecDocArticle),
+  searchProducts: ctrlWrap(searchProducts),
   getProductsBanner: ctrlWrap(getProductsBanner),
   getOneProduct: ctrlWrap(getOneProduct),
   getSitemap: ctrlWrap(getSitemap),

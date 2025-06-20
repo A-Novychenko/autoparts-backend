@@ -51,14 +51,47 @@ const fetchBatch = async page => {
 };
 
 // Массовое обновление товаров
+// const updateDatabase = async batch => {
+//   const bulkOps = batch.map(item => ({
+//     updateOne: {
+//       filter: { id: item.id },
+//       update: { $set: item },
+//       upsert: true,
+//     },
+//   }));
+
+//   if (bulkOps.length > 0) {
+//     await ASGProduct.bulkWrite(bulkOps);
+//   }
+// };
 const updateDatabase = async batch => {
-  const bulkOps = batch.map(item => ({
-    updateOne: {
-      filter: { id: item.id },
-      update: { $set: item },
-      upsert: true,
-    },
-  }));
+  const bulkOps = batch.map(item => {
+    const text = `
+      ${item.name || ''}
+      ${item.description || ''}
+      ${item.brand || ''}
+      ${item.category || ''}
+      ${item.article || ''}
+      ${item.tecdoc_article || ''}
+    `
+      .toLowerCase()
+      .replace(/[^a-zа-яё0-9]+/gi, ' ') // залишаємо тільки букви/цифри
+      .replace(/\b(\d+w)[\s\-]?(\d+)\b/g, '$1$2') // 5w 40 / 5w-40 -> 5w40
+      .trim();
+
+    return {
+      updateOne: {
+        filter: { id: item.id },
+        update: {
+          $set: {
+            ...item,
+            search_index: text,
+          },
+        },
+        upsert: true,
+      },
+    };
+  });
 
   if (bulkOps.length > 0) {
     await ASGProduct.bulkWrite(bulkOps);

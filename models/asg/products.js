@@ -19,6 +19,7 @@ const ASGProductSchema = new Schema(
     banner: { type: Boolean, default: false, required: true },
     sale: { type: Boolean, default: false, required: true },
     price_promo: { type: String, default: null },
+    search_index: { type: String, default: null },
   },
   { versionKey: false, timestamps: true },
 );

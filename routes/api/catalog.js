@@ -6,7 +6,7 @@ const {
   getCategory,
   getProducts,
   getProductsForCartByIds,
-  getProductsByTecDocArticle,
+  searchProducts,
   getProductsBanner,
   getOneProduct,
   getSitemap,
@@ -34,7 +34,7 @@ router.get('/products', getProducts);
 router.get('/products-cart-list', getProductsForCartByIds);
 
 //поиск товаров на сайте
-router.post('/search-products', getProductsByTecDocArticle);
+router.post('/search-products', searchProducts);
 
 //получение товаров для баннера
 router.get('/banner', getProductsBanner);
