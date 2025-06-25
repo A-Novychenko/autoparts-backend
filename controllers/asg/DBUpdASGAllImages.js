@@ -1,19 +1,16 @@
 const { serviceASG } = require('../../helpers');
 const ASGImage = require('../../models/asg/images');
+const { ASGProduct } = require('../../models/asg/products');
 
-const pLimit = require('p-limit'); // Для обмеження паралельності запитів
+const pLimit = require('p-limit');
 
 const { ASG_LOGIN, ASG_PASSWORD } = process.env;
+const MAX_CONCURRENT_REQUESTS = 30;
 
-// Максимальна кількість одночасних запитів
-const MAX_CONCURRENT_REQUESTS = 10;
-
-// Функція для отримання даних із сервісу
 const fetchBatch = async page => {
   try {
     const { data } = await serviceASG.post(`/product-images?page=${page}`);
-
-    return data.data; // Повертає масив об'єктів
+    return data.data;
   } catch (e) {
     if (e.response?.status === 401) {
       console.log('Refreshing token...');
@@ -21,7 +18,6 @@ const fetchBatch = async page => {
       const resASG = await serviceASG.post('/auth/login', credentials);
       serviceASG.defaults.headers.common.Authorization = `Bearer ${resASG.data.access_token}`;
       const { data } = await serviceASG.post(`/product-images?page=${page}`);
-
       return data.data;
     } else {
       console.error(`Error fetching page ${page}:`, e.message);
@@ -30,13 +26,12 @@ const fetchBatch = async page => {
   }
 };
 
-// Функція для оновлення бази даних
 const updateDatabase = async batch => {
   const bulkOps = batch.map(item => ({
     updateOne: {
-      filter: { product_id: item.product_id }, // Замінити `id` на унікальне поле вашої моделі
-      update: { $set: item }, // Оновлення даних
-      upsert: true, // Додати, якщо запису немає
+      filter: { product_id: item.product_id },
+      update: { $set: item },
+      upsert: true,
     },
   }));
 
@@ -45,21 +40,17 @@ const updateDatabase = async batch => {
   }
 };
 
-// Видалення застарілих даних
-// const removeStaleData = async existingIds => {
-//   await ASGProduct.deleteMany({ id: { $nin: existingIds } });
-// };
-
-// Основна функція для оновлення бази даних
 const DBUpdASGAllImages = async (req, res) => {
   console.log('Starting DB update...');
-  const limit = pLimit(MAX_CONCURRENT_REQUESTS); // Ліміт на одночасні запити
-  const allIds = new Set();
+  const limit = pLimit(MAX_CONCURRENT_REQUESTS);
+  const insertedIds = new Set();
   let currentPage = 1;
   let hasMoreData = true;
 
   try {
-    // Паралельне завантаження сторінок
+    const validProductIds = new Set(await ASGProduct.distinct('id'));
+    console.log(`Loaded ${validProductIds.size} product_ids from DB`);
+
     while (hasMoreData) {
       const tasks = [];
       for (let i = 0; i < MAX_CONCURRENT_REQUESTS && hasMoreData; i++) {
@@ -69,31 +60,43 @@ const DBUpdASGAllImages = async (req, res) => {
             console.log(`Fetching page ${page}...`);
             const batch = await fetchBatch(page);
 
-            if (batch.length > 0) {
-              await updateDatabase(batch);
-              batch.forEach(item => allIds.add(item.product_id)); // Зберігаємо ID
-            } else {
-              hasMoreData = false; // Якщо порожній масив, закінчуємо
+            const filteredBatch = batch.filter(item =>
+              validProductIds.has(item.product_id),
+            );
+
+            if (filteredBatch.length > 0) {
+              await updateDatabase(filteredBatch);
+              filteredBatch.forEach(item => insertedIds.add(item.product_id));
             }
 
-            console.log(`Page ${page} processed.`);
+            if (batch.length === 0) {
+              hasMoreData = false;
+            }
+
+            console.log(
+              `Page ${page} processed. Total inserted so far: ${insertedIds.size}`,
+            );
           }),
         );
       }
 
-      // Чекаємо завершення всіх завдань у цьому циклі
       await Promise.all(tasks);
     }
 
-    // Видалення застарілих даних
-    // console.log('Removing stale data...');
-    // await removeStaleData(Array.from(allIds));
+    // Определим, какие товары остались без изображений
+    const missingProductIds = Array.from(validProductIds).filter(
+      id => !insertedIds.has(id),
+    );
 
-    console.log('Database updated successfully');
+    console.log(
+      `\n🟡 Пропущено ${missingProductIds.length} товаров без изображений.`,
+    );
+
     res.json({
       status: 'success',
       code: 200,
-      message: 'DB updated successfully',
+      message: `Images updated for ${insertedIds.size} products`,
+      missing: missingProductIds.length,
     });
   } catch (e) {
     console.error('Error during database update:', e.message);

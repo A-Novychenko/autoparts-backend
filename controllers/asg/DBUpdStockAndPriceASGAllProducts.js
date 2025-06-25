@@ -7,7 +7,7 @@ const MAX_CONCURRENT_REQUESTS = 25;
 const MAX_RETRIES = 3;
 const RETRY_DELAY_MS = 2000;
 
-// 🔁 Повтор запроса с задержкой и отловом ошибок
+// 🔁 Универсальный retry
 const retryRequest = async (
   fn,
   retries = MAX_RETRIES,
@@ -27,7 +27,7 @@ const retryRequest = async (
   }
 };
 
-// 📦 Получение страницы с учетом авторизации и ошибок
+// 📦 Получение страницы с авторизацией
 const fetchBatch = async page => {
   return retryRequest(async () => {
     try {
@@ -49,46 +49,32 @@ const fetchBatch = async page => {
   });
 };
 
-// 🧠 Подготовка и сохранение товаров в MongoDB
-const updateDatabase = async items => {
+// 💾 Обновление ТОЛЬКО цены и остатков
+const updateStockAndPriceInDB = async items => {
   if (!Array.isArray(items) || items.length === 0) return;
 
-  const bulkOps = items.map(item => {
-    const searchIndex = `
-      ${item.name || ''}
-      ${item.description || ''}
-      ${item.brand || ''}
-      ${item.category || ''}
-    `
-      .toLowerCase()
-      .replace(/[^a-zа-яё0-9]+/gi, ' ')
-      .replace(/\b(\d+w)[\s\-]?(\d+)\b/g, '$1$2')
-      .trim()
-      .slice(0, 500);
-
-    return {
-      updateOne: {
-        filter: { id: item.id },
-        update: {
-          $set: {
-            ...item,
-            search_index: searchIndex,
-          },
+  const ops = items.map(item => ({
+    updateOne: {
+      filter: { id: item.id },
+      update: {
+        $set: {
+          price_currency_980: item.price_currency_980,
+          count_warehouse_3: item.count_warehouse_3,
+          count_warehouse_4: item.count_warehouse_4,
         },
-        upsert: true,
       },
-    };
-  });
+    },
+  }));
 
-  await ASGProduct.bulkWrite(bulkOps, { ordered: false });
+  await ASGProduct.bulkWrite(ops, { ordered: false });
 };
 
 // 🚀 Главный контроллер
-const DBUpdASGAllProducts = async (req, res) => {
-  console.log('🚀 Начато обновление базы товаров ASG...');
+const DBUpdStockAndPriceASGAllProducts = async (req, res) => {
+  console.log('📦 Старт обновления цен и остатков...');
   const limit = pLimit(MAX_CONCURRENT_REQUESTS);
   const failedPages = [];
-  const allIds = new Set();
+  let updated = 0;
 
   try {
     const first = await fetchBatch(1);
@@ -97,7 +83,7 @@ const DBUpdASGAllProducts = async (req, res) => {
     const totalPages = Math.ceil(totalItems / perPage);
 
     console.log(
-      `📄 Всего страниц: ${totalPages}, товаров: ${totalItems}, на странице: ${perPage}`,
+      `🔢 Всего страниц: ${totalPages}, товаров: ${totalItems}, на стр.: ${perPage}`,
     );
 
     const tasks = [];
@@ -108,17 +94,18 @@ const DBUpdASGAllProducts = async (req, res) => {
           try {
             const data = page === 1 ? first : await fetchBatch(page);
             const items = data?.data?.items || [];
-            if (items.length > 0) {
-              await updateDatabase(items);
-              items.forEach(i => allIds.add(i.id));
-              console.log(`✅ Обработана страница ${page}`);
+
+            if (items.length) {
+              await updateStockAndPriceInDB(items);
+              updated += items.length;
+              console.log(`✅ Стр. ${page}: обновлено ${items.length}`);
             } else {
               console.warn(`⚠️ Пустая страница ${page}`);
             }
           } catch (err) {
             const status = err?.response?.status;
             console.error(
-              `❌ Ошибка на странице ${page}. Status: ${status}, Message: ${err.message}`,
+              `❌ Ошибка на стр. ${page}: ${status} - ${err.message}`,
             );
             failedPages.push(page);
           }
@@ -135,16 +122,17 @@ const DBUpdASGAllProducts = async (req, res) => {
       res.status(207).json({
         status: 'partial',
         code: 207,
-        message: 'База обновлена частично',
+        message: 'Обновление завершено частично',
+        updatedCount: updated,
         failedPages,
       });
     } else {
-      console.log('✅ Все страницы успешно обработаны.');
+      console.log('✅ Обновление цен и остатков завершено.');
       res.json({
         status: 'success',
         code: 200,
-        message: 'База успешно обновлена',
-        updatedCount: allIds.size,
+        message: 'Все товары обновлены',
+        updatedCount: updated,
       });
     }
   } catch (e) {
@@ -152,9 +140,9 @@ const DBUpdASGAllProducts = async (req, res) => {
     res.status(500).json({
       status: 'error',
       code: 500,
-      message: 'Обновление базы завершилось с ошибкой',
+      message: 'Не удалось завершить обновление',
     });
   }
 };
 
-module.exports = DBUpdASGAllProducts;
+module.exports = DBUpdStockAndPriceASGAllProducts;

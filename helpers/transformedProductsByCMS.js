@@ -28,6 +28,7 @@ const transformedProductsByCMS = products => {
       updatedAt: product.updatedAt,
 
       count_warehouse_3: product.count_warehouse_3,
+      count_warehouse_4: product.count_warehouse_4,
       price_supplier: product.price_currency_980,
       price_client,
       price_promo: product.price_promo,

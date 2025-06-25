@@ -2,7 +2,7 @@ const { Schema, model } = require('mongoose');
 const Joi = require('joi');
 
 const { handleMongooseError } = require('../../helpers');
-const VinCounter = require('./vinCounter'); // Підключаємо модель лічильника
+const Counter = require('./Counter'); // Підключаємо модель лічильника
 
 const vinRequestSchema = new Schema(
   {
@@ -44,7 +44,7 @@ const vinRequestSchema = new Schema(
 vinRequestSchema.pre('save', async function (next) {
   if (this.isNew) {
     try {
-      const counter = await VinCounter.findOneAndUpdate(
+      const counter = await Counter.findOneAndUpdate(
         { name: 'vinRequest' },
         { $inc: { seq: 1 } },
         { new: true, upsert: true },

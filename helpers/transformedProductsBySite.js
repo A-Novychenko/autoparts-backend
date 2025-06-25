@@ -28,6 +28,7 @@ const transformedProductsBySite = products => {
       updatedAt: product.updatedAt,
 
       count_warehouse_3: product.count_warehouse_3,
+      count_warehouse_4: product.count_warehouse_4,
       price,
       price_promo: product.price_promo ? Number(product.price_promo) : null,
       banner: product.banner,

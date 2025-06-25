@@ -1,10 +1,10 @@
 const { Schema, model } = require('mongoose');
 
-const vinCounterSchema = new Schema({
+const counterSchema = new Schema({
   name: { type: String, required: true, unique: true },
   seq: { type: Number, default: 0 },
 });
 
-const VinCounter = model('VinCounter', vinCounterSchema);
+const Counter = model('Counter', counterSchema);
 
-module.exports = VinCounter;
+module.exports = Counter;

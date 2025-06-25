@@ -38,10 +38,6 @@ const getProducts = async (req, res) => {
       setTimeout(() => totalPagesCache.delete(cacheKey), 5 * 60 * 1000);
     }
 
-    console.log(
-      `[getProducts] category_id=${category_id}, page=${numericPage}, skip=${skip}`,
-    );
-
     const isHighPage = numericPage > 1000;
 
     const pipeline = [

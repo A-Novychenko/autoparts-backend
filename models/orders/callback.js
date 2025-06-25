@@ -3,7 +3,7 @@ const Joi = require('joi');
 
 const { handleMongooseError } = require('../../helpers');
 
-const CallbackCounter = require('./callbackCounter'); // Підключаємо модель лічильника
+const Counter = require('./Counter'); // Підключаємо модель лічильника
 
 const callbackSchema = new Schema(
   {
@@ -31,7 +31,7 @@ const callbackSchema = new Schema(
 callbackSchema.pre('save', async function (next) {
   if (this.isNew) {
     try {
-      const counter = await CallbackCounter.findOneAndUpdate(
+      const counter = await Counter.findOneAndUpdate(
         { name: 'callback' },
         { $inc: { seq: 1 } },
         { new: true, upsert: true },

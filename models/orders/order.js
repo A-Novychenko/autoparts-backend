@@ -2,7 +2,7 @@ const { Schema, model } = require('mongoose');
 const Joi = require('joi');
 
 const { handleMongooseError } = require('../../helpers');
-const OrderCounter = require('./orderCounter'); // Підключаємо модель лічильника
+const Counter = require('./Counter'); // Підключаємо модель лічильника
 
 const orderSchema = new Schema(
   {
@@ -66,7 +66,7 @@ const orderSchema = new Schema(
 orderSchema.pre('save', async function (next) {
   if (this.isNew) {
     try {
-      const counter = await OrderCounter.findOneAndUpdate(
+      const counter = await Counter.findOneAndUpdate(
         { name: 'order' },
         { $inc: { seq: 1 } },
         { new: true, upsert: true },
