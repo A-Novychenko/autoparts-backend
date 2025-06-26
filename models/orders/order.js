@@ -137,6 +137,7 @@ const addOrderSchema = Joi.object({
         price_promo: Joi.number().allow(null).optional(),
         quantity: Joi.number().required(),
         availability: Joi.string().allow('').optional(),
+        availabilityLviv: Joi.string().allow('').optional(),
       }),
     )
     .min(1)

@@ -5,9 +5,8 @@ const { sendTg, sendEmail, formatDateToUkrainian } = require('../../helpers');
 const { ADMIN_EMAIL } = process.env;
 
 const addCallback = async (req, res) => {
-  const result = await Callback.create({ ...req.body });
-
-  console.log('result', result);
+  const { phone } = req.body;
+  const result = await Callback.create({ phone });
 
   const newTransactionEmail = {
     to: ADMIN_EMAIL,

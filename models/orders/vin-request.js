@@ -88,8 +88,16 @@ const addVinRequestSchema = Joi.object({
   captchaToken: Joi.string().allow('').optional(),
 });
 
+const updateVinRequestSchema = Joi.object({
+  status: Joi.string()
+    .valid('new', 'in-progress', 'rejected', 'done')
+    .optional(),
+  comment: Joi.string().allow('').optional(),
+});
+
 const schemasVinRequest = {
   addVinRequestSchema,
+  updateVinRequestSchema,
 };
 
 const VinRequest = model('vinRequest', vinRequestSchema);

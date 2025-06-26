@@ -55,6 +55,7 @@ const addCallbackSchema = Joi.object({
     'string.max': 'ТThe phone number must contain no more than 25 characters',
     'any.required': 'Phone is required',
   }),
+  captchaToken: Joi.string().allow('').optional(),
 });
 
 const updateCallbackSchema = Joi.object({

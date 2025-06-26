@@ -1,11 +1,6 @@
 const express = require('express');
 
-const {
-  authenticate,
-  isAdmin,
-  isValidId,
-  recaptcha,
-} = require('../../middlewares');
+const { authenticate, isValidId, recaptcha } = require('../../middlewares');
 const {
   getAllVinRequests,
   addVinRequest,
@@ -27,7 +22,7 @@ const { schemasCallback } = require('../../models/orders/callback');
 
 const router = express.Router();
 
-router.get('/', getAllOrders);
+router.get('/', authenticate, getAllOrders);
 router.post(
   '/add-order',
   recaptcha,
@@ -35,7 +30,7 @@ router.post(
   addOrder,
 );
 
-router.get('/vin-requests', getAllVinRequests);
+router.get('/vin-requests', authenticate, getAllVinRequests);
 router.post(
   '/add-vin-request',
   recaptcha,
@@ -43,14 +38,15 @@ router.post(
   addVinRequest,
 );
 
-router.get('/callback', getAllCallback);
+router.get('/callback', authenticate, getAllCallback);
 router.post(
   '/add-callback',
+  recaptcha,
   validateBody(schemasCallback.addCallbackSchema),
   addCallback,
 );
 
-router.get('/:id', isValidId, getOneOrder);
+router.get('/:id', authenticate, isValidId, getOneOrder);
 router.get('/status/:id', isValidId, getOrderStatus);
 router.patch(
   '/:id',
@@ -60,11 +56,12 @@ router.patch(
   updateOrder,
 );
 
-router.get('/vin-requests/:id', isValidId, getOneVinRequest);
+router.get('/vin-requests/:id', authenticate, isValidId, getOneVinRequest);
 router.patch(
   '/vin-requests/:id',
+  authenticate,
   isValidId,
-  // validateBody(),
+  validateBody(schemasVinRequest.updateVinRequestSchema),
   updateVinRequests,
 );
 

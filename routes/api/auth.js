@@ -26,8 +26,8 @@ router.post('/logout', authenticate, logout);
 
 router.post(
   '/register',
-  // authenticate,
-  // isAdmin,
+  authenticate,
+  isAdmin,
   validateBody(schemas.registerSchema),
   register,
 );
