@@ -14,7 +14,7 @@ const authenticate = async (req, res, next) => {
   if (bearer !== 'Bearer') {
     next(HttpError(401));
   }
-  console.log('RRR');
+
   try {
     const { id } = jwt.verify(accessToken, ACCESS_SECRET_KEY);
 
