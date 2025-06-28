@@ -45,7 +45,7 @@ router.get('/single-product/:id', isValidId, getOneProduct);
 //получение sitemap (test)
 router.post('/sitemap', authenticate, isAdmin, getSitemap);
 
-//получение sitemap (test)
+//общее количество товаров
 router.get('/products-total', getTotalProducts);
 
 module.exports = router;
