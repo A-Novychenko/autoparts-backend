@@ -39,7 +39,7 @@ router.post('/search-products', searchProducts);
 //получение товаров для баннера
 router.get('/banner', getProductsBanner);
 
-//получение товаров для баннера
+//получение товаров для страницы продукта
 router.get('/single-product/:id', isValidId, getOneProduct);
 
 //получение sitemap (test)
