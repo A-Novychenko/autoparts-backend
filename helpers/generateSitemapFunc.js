@@ -1,8 +1,9 @@
 const fs = require('fs');
 const path = require('path');
-const { generateSlugName, generateProductPath } = require('../../helpers');
-const { ASGCategory } = require('../../models/asg/categories');
-const { ASGProduct } = require('../../models/asg/products');
+const { ASGCategory } = require('../models/asg/categories');
+const { ASGProduct } = require('../models/asg/products');
+const generateSlugName = require('./generateSlugName');
+const generateProductPath = require('./generateProductPath');
 
 const BASE_PATHS = [
   { loc: '', changefreq: 'weekly', priority: '1.0' },
@@ -35,7 +36,7 @@ const fetchSearchUrls = () => {
   ];
 
   return popularQueries.map(query => ({
-    loc: `/search-products/grid/${encodeURIComponent(query.toUpperCase())}`,
+    loc: `/search-products/grid?searchQuery=${encodeURIComponent(query.toUpperCase())}`,
     changefreq: 'weekly',
     priority: '0.6',
   }));
@@ -182,7 +183,7 @@ ${sitemapFiles.map(file => `  <sitemap><loc>${baseUrl}/sitemaps/${file}</loc><la
 </sitemapindex>`;
 };
 
-const getSitemap = async (req, res) => {
+const generateSitemapFunc = async () => {
   const baseUrl = process.env.MAIN_SITE_URL;
   const lastMod = new Date().toISOString();
 
@@ -215,14 +216,27 @@ const getSitemap = async (req, res) => {
 
   const indexXml = generateSitemapIndexXml(sitemapFiles, baseUrl);
   fs.writeFileSync(path.join(SITEMAP_DIR, 'sitemap-index.xml'), indexXml);
-  console.log('Сгенерирован индексный sitemap-index.xml');
-  console.log('----------------------------------');
-  console.log(`Файлов sitemap: ${sitemapFiles.length}`);
-  console.log(`Поисковых URL: ${searchUrls.length}`);
-  console.log(`Общее количество URL: ${allUrls.length}`);
-  console.log('----------------------------------');
+  //   console.log('Сгенерирован индексный sitemap-index.xml');
+  //   console.log('----------------------------------');
+  //   console.log(`Файлов sitemap: ${sitemapFiles.length}`);
+  //   console.log(`Поисковых URL: ${searchUrls.length}`);
+  //   console.log(`Общее количество URL: ${allUrls.length}`);
+  //   console.log('----------------------------------');
 
-  res.send(`✅ Sitemaps сгенерированы: ${sitemapFiles.length} файлов.`);
+  return sitemapFiles.length;
 };
 
-module.exports = getSitemap;
+module.exports = generateSitemapFunc;
+
+// Якщо файл запущений напряму, запускаємо генерацію автоматично:
+if (require.main === module) {
+  generateSitemapFunc()
+    .then(count => {
+      console.log(`✅ Генерація завершена. Файлів: ${count}`);
+      process.exit(0);
+    })
+    .catch(err => {
+      console.error('❌ Помилка генерації sitemap:', err);
+      process.exit(1);
+    });
+}

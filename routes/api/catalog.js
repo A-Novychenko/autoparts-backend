@@ -9,7 +9,7 @@ const {
   searchProducts,
   getProductsBanner,
   getOneProduct,
-  getSitemap,
+  generateSitemapCtrl,
   getTotalProducts,
 } = require('../../controllers/catalog');
 const { isValidId, authenticate, isAdmin } = require('../../middlewares');
@@ -43,7 +43,7 @@ router.get('/banner', getProductsBanner);
 router.get('/single-product/:id', isValidId, getOneProduct);
 
 //получение sitemap (test)
-router.post('/sitemap', authenticate, isAdmin, getSitemap);
+router.post('/sitemap', authenticate, isAdmin, generateSitemapCtrl);
 
 //общее количество товаров
 router.get('/products-total', getTotalProducts);

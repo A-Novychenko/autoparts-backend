@@ -8,7 +8,7 @@ const getProductsForCartByIds = require('./getProductsForCartByIds');
 const searchProducts = require('./searchProducts');
 const getProductsBanner = require('./getProductsBanner');
 const getOneProduct = require('./getOneProduct');
-const getSitemap = require('./getSitemap');
+const generateSitemapCtrl = require('./generateSitemapCtrl');
 const getTotalProducts = require('./getTotalProducts');
 
 module.exports = {
@@ -20,6 +20,6 @@ module.exports = {
   searchProducts: ctrlWrap(searchProducts),
   getProductsBanner: ctrlWrap(getProductsBanner),
   getOneProduct: ctrlWrap(getOneProduct),
-  getSitemap: ctrlWrap(getSitemap),
+  generateSitemapCtrl: ctrlWrap(generateSitemapCtrl),
   getTotalProducts: ctrlWrap(getTotalProducts),
 };

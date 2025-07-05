@@ -11,6 +11,7 @@ const transformedProductsBySite = require('./transformedProductsBySite');
 const formatDateToUkrainian = require('./formatDateToUkrainian');
 const generateSlugName = require('./generateSlugName');
 const generateProductPath = require('./generateProductPath');
+const generateSitemapFunc = require('./generateSitemapFunc');
 
 module.exports = {
   HttpError,
@@ -26,4 +27,5 @@ module.exports = {
   formatDateToUkrainian,
   generateSlugName,
   generateProductPath,
+  generateSitemapFunc,
 };

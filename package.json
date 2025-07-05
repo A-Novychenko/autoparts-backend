@@ -11,7 +11,8 @@
     "start": "cross-env NODE_ENV=production node ./server.js",
     "dev": "cross-env NODE_ENV=development nodemon ./server.js",
     "lint": "eslint **/*.js",
-    "lint:fix": "eslint --fix **/*.js"
+    "lint:fix": "eslint --fix **/*.js",
+    "generate-sitemap": "node helpers/generateSitemapFunc.js"
   },
   "repository": "https://github.com/A-Novychenko/autoparts-backend.git",
   "author": "A-Novychenko <A.Novychenko@outlook.com>",
