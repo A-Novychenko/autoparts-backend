@@ -3,8 +3,6 @@ const { Callback } = require('../../models/orders/callback');
 const updateCallback = async (req, res) => {
   const { id } = req.params;
 
-  console.log('req.body', req.body);
-
   const result = await Callback.findByIdAndUpdate(
     id,
     { ...req.body },

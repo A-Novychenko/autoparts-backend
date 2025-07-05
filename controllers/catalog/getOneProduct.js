@@ -11,8 +11,6 @@ const getOneProduct = async (req, res) => {
   // const result = await ASGProduct.findById([id]);
   const result = await ASGProduct.findById(id);
 
-  console.log('result', result);
-
   if (!result) {
     throw HttpError(404, 'product not found');
   }

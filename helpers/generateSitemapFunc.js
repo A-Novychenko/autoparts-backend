@@ -45,7 +45,7 @@ const fetchSearchUrls = () => {
 const ITEMS_PER_PAGE = 20;
 const ITEMS_PER_BATCH = 1000;
 const MAX_URLS_PER_SITEMAP = 40000;
-const SITEMAP_DIR = path.resolve(__dirname, '../../public/sitemaps');
+const SITEMAP_DIR = path.resolve(__dirname, '../public/sitemaps');
 
 if (!fs.existsSync(SITEMAP_DIR)) {
   fs.mkdirSync(SITEMAP_DIR, { recursive: true });

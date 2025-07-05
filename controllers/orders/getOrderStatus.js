@@ -3,7 +3,6 @@ const { Order } = require('../../models/orders/order');
 const getOrderStatus = async (req, res) => {
   const { id } = req.params;
   const result = await Order.findById(id);
-  console.log('result', result.status);
 
   res.status(200).json({
     status: 'success',
