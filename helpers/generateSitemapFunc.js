@@ -227,16 +227,3 @@ const generateSitemapFunc = async () => {
 };
 
 module.exports = generateSitemapFunc;
-
-// Якщо файл запущений напряму, запускаємо генерацію автоматично:
-if (require.main === module) {
-  generateSitemapFunc()
-    .then(count => {
-      console.log(`✅ Генерація завершена. Файлів: ${count}`);
-      process.exit(0);
-    })
-    .catch(err => {
-      console.error('❌ Помилка генерації sitemap:', err);
-      process.exit(1);
-    });
-}

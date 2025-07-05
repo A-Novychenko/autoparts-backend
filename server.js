@@ -4,7 +4,7 @@ const logger = require('morgan');
 const cors = require('cors');
 const mongoose = require('mongoose');
 require('dotenv').config();
-const { createErrorReq } = require('./helpers');
+const { createErrorReq, generateSitemapFunc } = require('./helpers');
 
 const { PORT = 3005, DB_HOST } = process.env;
 
@@ -55,7 +55,24 @@ app.use((err, req, res, next) => {
 
 mongoose
   .connect(DB_HOST)
-  .then(app.listen(PORT))
+  // .then(app.listen(PORT))
+  .then(async () => {
+    app.listen(PORT, () => {
+      if (process.env.SERVER_MODE !== 'dev') {
+        console.log(`✅ Server running. PORT: ${PORT}`);
+      }
+    });
+
+    if (process.env.SERVER_MODE !== 'dev') {
+      // ✅ Генерація sitemap одразу після запуску
+      try {
+        const count = await generateSitemapFunc();
+        console.log(`✅ Sitemaps згенеровані. Файлів: ${count}`);
+      } catch (error) {
+        console.error('❌ Помилка генерації sitemap:', error);
+      }
+    }
+  })
   .catch(e => {
     console.log(`Server not running. Error message: ${e.message}`);
     process.exit(1);
