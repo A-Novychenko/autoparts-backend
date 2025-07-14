@@ -13,6 +13,7 @@ const BASE_PATHS = [
   { loc: '/payment', changefreq: 'yearly', priority: '0.4' },
   { loc: '/return', changefreq: 'yearly', priority: '0.4' },
   { loc: '/news', changefreq: 'yearly', priority: '0.6' },
+  // добавить генерацию ссылок на новости и акции после того как это добавится в админку
   { loc: '/user-agreement', changefreq: 'yearly', priority: '0.3' },
   { loc: '/brands', changefreq: 'weekly', priority: '0.9' },
   { loc: '/contacts', changefreq: 'yearly', priority: '0.5' },
