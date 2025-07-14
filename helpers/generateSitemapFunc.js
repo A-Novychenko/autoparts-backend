@@ -8,6 +8,14 @@ const generateProductPath = require('./generateProductPath');
 const BASE_PATHS = [
   { loc: '', changefreq: 'weekly', priority: '1.0' },
   { loc: '/vin-request', changefreq: 'monthly', priority: '0.5' },
+  { loc: '/about', changefreq: 'yearly', priority: '0.5' },
+  { loc: '/delivery', changefreq: 'yearly', priority: '0.4' },
+  { loc: '/payment', changefreq: 'yearly', priority: '0.4' },
+  { loc: '/return', changefreq: 'yearly', priority: '0.4' },
+  { loc: '/news', changefreq: 'yearly', priority: '0.6' },
+  { loc: '/user-agreement', changefreq: 'yearly', priority: '0.3' },
+  { loc: '/brands', changefreq: 'weekly', priority: '0.9' },
+  { loc: '/contacts', changefreq: 'yearly', priority: '0.5' },
 ];
 
 const fetchSearchUrls = () => {

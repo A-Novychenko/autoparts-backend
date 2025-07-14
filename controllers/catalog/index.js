@@ -10,6 +10,7 @@ const getProductsBanner = require('./getProductsBanner');
 const getOneProduct = require('./getOneProduct');
 const generateSitemapCtrl = require('./generateSitemapCtrl');
 const getTotalProducts = require('./getTotalProducts');
+const getBrandsCategories = require('./getBrandsCategories');
 
 module.exports = {
   getMainCategories: ctrlWrap(getMainCategories),
@@ -22,4 +23,5 @@ module.exports = {
   getOneProduct: ctrlWrap(getOneProduct),
   generateSitemapCtrl: ctrlWrap(generateSitemapCtrl),
   getTotalProducts: ctrlWrap(getTotalProducts),
+  getBrandsCategories: ctrlWrap(getBrandsCategories),
 };

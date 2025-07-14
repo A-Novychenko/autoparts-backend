@@ -11,6 +11,7 @@ const {
   getOneProduct,
   generateSitemapCtrl,
   getTotalProducts,
+  getBrandsCategories,
 } = require('../../controllers/catalog');
 const { isValidId, authenticate, isAdmin } = require('../../middlewares');
 
@@ -47,5 +48,8 @@ router.post('/sitemap', authenticate, isAdmin, generateSitemapCtrl);
 
 //общее количество товаров
 router.get('/products-total', getTotalProducts);
+
+//бренды-категории
+router.get('/brands-categories', getBrandsCategories);
 
 module.exports = router;
