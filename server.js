@@ -24,7 +24,7 @@ const app = express();
 const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short';
 
 if (SERVER_MODE === 'prod') {
-  cron.schedule('34 5,13,21 * * *', cronUpdPriceAndStockAsg);
+  cron.schedule('40 5,13,20 * * *', cronUpdPriceAndStockAsg);
 }
 
 app.use(logger(formatsLogger));
