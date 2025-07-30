@@ -3,10 +3,15 @@ const path = require('path');
 const logger = require('morgan');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const cron = require('node-cron');
 require('dotenv').config();
-const { createErrorReq, generateSitemapFunc } = require('./helpers');
+const {
+  createErrorReq,
+  generateSitemapFunc,
+  cronUpdPriceAndStockAsg,
+} = require('./helpers');
 
-const { PORT = 3005, DB_HOST } = process.env;
+const { PORT = 3005, DB_HOST, SERVER_MODE } = process.env;
 
 const authRouter = require('./routes/api/auth');
 const asgRouter = require('./routes/api/asg');
@@ -17,6 +22,10 @@ const cmsCatalogRouter = require('./routes/api/cmsCatalog');
 const app = express();
 
 const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short';
+
+if (SERVER_MODE === 'prod') {
+  cron.schedule('34 5,13,21 * * *', cronUpdPriceAndStockAsg);
+}
 
 app.use(logger(formatsLogger));
 app.use(cors());

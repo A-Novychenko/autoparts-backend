@@ -12,6 +12,8 @@ const formatDateToUkrainian = require('./formatDateToUkrainian');
 const generateSlugName = require('./generateSlugName');
 const generateProductPath = require('./generateProductPath');
 const generateSitemapFunc = require('./generateSitemapFunc');
+const asgUpdStockAndPriceFunc = require('./asgUpdStockAndPriceFunc');
+const cronUpdPriceAndStockAsg = require('./cronUpdPriceAndStockAsg');
 
 module.exports = {
   HttpError,
@@ -28,4 +30,6 @@ module.exports = {
   generateSlugName,
   generateProductPath,
   generateSitemapFunc,
+  asgUpdStockAndPriceFunc,
+  cronUpdPriceAndStockAsg,
 };
