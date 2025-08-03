@@ -25,19 +25,46 @@ const addOrder = async (req, res) => {
   });
 
   const { totalAmountWithDiscount } = calculateTotals(result.products);
+  const products = result?.products
+    ? result.products
+        .map(({ brand, article, price, quantity }) => {
+          return `<b>${brand} ${article} ${price}грн x ${quantity}шт</b>\n`;
+        })
+        .join('')
+    : '';
+  const mailProducts = result?.products
+    ? result.products
+        .map(({ brand, article, price, quantity }) => {
+          return `<li><p>${brand} ${article} ${price}грн x ${quantity}шт</p></li>\n`;
+        })
+        .join('')
+    : '';
 
   const newTransactionEmail = {
     to: ADMIN_EMAIL,
     subject: `Новый заказ:${result.number}`,
     html: `<p>Новый заказ:${result.number}</p>
     <p>Пользователь: ${result.name} Телефон:${result.phone}</p>
-    <p>Товаров: ${result.products.length}шт на сумму:${totalAmountWithDiscount}</p>
-    <p><a target="_blank" href="${FRONTEND_URL}/dashboard/orders/order/${result._id}">Открыть заказ </a></p>`,
+    <ul>${mailProducts}</ul>
+    <p>Товаров: ${result.products.length}шт на сумму:${totalAmountWithDiscount}грн</p>
+    <p><a target="_blank" href="${FRONTEND_URL}/dashboard/orders/order/${result._id}">Открыть заказ </a></p>
+    
+    <p>Доставка: ${result.delivery === 'post' ? 'Новая Почта' : 'другое'} ${result.deliveryCity} №${result.postOffice}</p>
+    
+    ${result.message ? `<b>Сообщение: ${result.message}</b>` : ''}`,
   };
 
+  const tgMsg = `<b>Новый заказ №${result.number}</b>\n
+<b>Клиент: ${result.name} ${result.phone}</b>\n
+<b>Доставка: ${result.delivery === 'post' ? 'Новая Почта' : 'другое'} ${result.deliveryCity} №${result.postOffice}</b>\n
+${products}\n
+<b>Сумма: ${totalAmountWithDiscount}грн</b> \n
+${result.message ? `<b>Сообщение: ${result.message}</b>` : ''}`;
+
   try {
-    await sendTg(`<b>Новый заказ №${result.number}</b>`);
-    await sendEmail(newTransactionEmail);
+    await Promise.all([sendTg(tgMsg), sendEmail(newTransactionEmail)]);
+    // await sendTg(tgMsg);
+    // await sendEmail(newTransactionEmail);
   } catch (e) {
     console.log('e', e);
   }
