@@ -5,7 +5,7 @@ const serviceASG = require('./serviceASG');
 
 const { ASG_LOGIN, ASG_PASSWORD } = process.env;
 
-const MAX_CONCURRENT_REQUESTS = 3;
+const MAX_CONCURRENT_REQUESTS = 1;
 const MAX_RETRIES = 5;
 const RETRY_DELAY_MS = 2000;
 

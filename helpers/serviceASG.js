@@ -3,9 +3,13 @@ const axios = require('axios');
 // const getBearer = async () => {};
 
 const X_ASG_HEADER = process.env.X_ASG_HEADER;
+const ASG_URL = process.env.ASG_URL;
+
+console.log('ASG_URL', ASG_URL);
 
 const serviceASG = axios.create({
-  baseURL: 'https://online.asg.ua/api',
+  // baseURL: 'https://online.asg.ua/api',
+  baseURL: ASG_URL,
   headers: {
     'X-Asg-Header': X_ASG_HEADER,
   },
