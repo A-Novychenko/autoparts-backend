@@ -1,4 +1,5 @@
 const { transformedProductsBySite, HttpError } = require('../../helpers');
+const { ASGCategory } = require('../../models/asg/categories');
 
 const ASGImage = require('../../models/asg/images');
 const { ASGProduct } = require('../../models/asg/products');
@@ -8,7 +9,6 @@ const getOneProduct = async (req, res) => {
 
   console.log('PRODUCT-ID: ', id);
 
-  // const result = await ASGProduct.findById([id]);
   const result = await ASGProduct.findById(id);
 
   if (!result) {
@@ -16,6 +16,9 @@ const getOneProduct = async (req, res) => {
   }
 
   const imgResult = await ASGImage.findOne({ product_id: result.id });
+  const category = await ASGCategory.findOne({ id: result.category_id });
+
+  result.margin = category.margin;
 
   const img = imgResult ? imgResult.original_images : [];
 
