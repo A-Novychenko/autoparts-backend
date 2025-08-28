@@ -1,13 +1,12 @@
-const pLimit = require('p-limit');
 const { ASGProduct } = require('../../models/asg/products');
 const { serviceASG } = require('../../helpers');
 const { ASG_LOGIN, ASG_PASSWORD } = process.env;
 
-const MAX_CONCURRENT_REQUESTS = 25;
 const MAX_RETRIES = 3;
 const RETRY_DELAY_MS = 2000;
+const REQUEST_DELAY_MS = 1000; // пауза между запросами, чтобы избежать 429
 
-// 🔁 Повтор запроса с задержкой и отловом ошибок
+// 🔁 Повтор запроса с задержкой
 const retryRequest = async (
   fn,
   retries = MAX_RETRIES,
@@ -19,6 +18,7 @@ const retryRequest = async (
     } catch (e) {
       const status = e?.response?.status;
       if (i < retries - 1 && [500, 502, 504, 429].includes(status)) {
+        console.warn(`⚠️ Ошибка ${status}, повтор через ${delay}мс...`);
         await new Promise(r => setTimeout(r, delay));
       } else {
         throw e;
@@ -27,7 +27,7 @@ const retryRequest = async (
   }
 };
 
-// 📦 Получение страницы с учетом авторизации и ошибок
+// 📦 Получение страницы с авторизацией
 const fetchBatch = async page => {
   return retryRequest(async () => {
     try {
@@ -35,6 +35,7 @@ const fetchBatch = async page => {
       return res.data;
     } catch (e) {
       if (e?.response?.status === 401) {
+        console.log('🔑 Обновление токена...');
         const auth = await serviceASG.post('/auth/login', {
           login: ASG_LOGIN,
           password: ASG_PASSWORD,
@@ -86,7 +87,6 @@ const updateDatabase = async items => {
 // 🚀 Главный контроллер
 const DBUpdASGAllProducts = async (req, res) => {
   console.log('🚀 Начато обновление базы товаров ASG...');
-  const limit = pLimit(MAX_CONCURRENT_REQUESTS);
   const failedPages = [];
   const allIds = new Set();
 
@@ -100,33 +100,31 @@ const DBUpdASGAllProducts = async (req, res) => {
       `📄 Всего страниц: ${totalPages}, товаров: ${totalItems}, на странице: ${perPage}`,
     );
 
-    const tasks = [];
-
     for (let page = 1; page <= totalPages; page++) {
-      tasks.push(
-        limit(async () => {
-          try {
-            const data = page === 1 ? first : await fetchBatch(page);
-            const items = data?.data?.items || [];
-            if (items.length > 0) {
-              await updateDatabase(items);
-              items.forEach(i => allIds.add(i.id));
-              console.log(`✅ Обработана страница ${page}`);
-            } else {
-              console.warn(`⚠️ Пустая страница ${page}`);
-            }
-          } catch (err) {
-            const status = err?.response?.status;
-            console.error(
-              `❌ Ошибка на странице ${page}. Status: ${status}, Message: ${err.message}`,
-            );
-            failedPages.push(page);
-          }
-        }),
-      );
-    }
+      try {
+        const data = page === 1 ? first : await fetchBatch(page);
+        const items = data?.data?.items || [];
 
-    await Promise.all(tasks);
+        if (items.length > 0) {
+          await updateDatabase(items);
+          items.forEach(i => allIds.add(i.id));
+          console.log(`✅ Обработана страница ${page}`);
+        } else {
+          console.warn(`⚠️ Пустая страница ${page}`);
+        }
+      } catch (err) {
+        const status = err?.response?.status;
+        console.error(
+          `❌ Ошибка на странице ${page}. Status: ${status}, Message: ${err.message}`,
+        );
+        failedPages.push(page);
+      }
+
+      // ⏸️ пауза между запросами
+      if (page < totalPages) {
+        await new Promise(r => setTimeout(r, REQUEST_DELAY_MS));
+      }
+    }
 
     if (failedPages.length > 0) {
       console.warn(

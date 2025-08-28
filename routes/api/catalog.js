@@ -12,6 +12,8 @@ const {
   generateSitemapCtrl,
   getTotalProducts,
   getBrandsCategories,
+  getTopProducts,
+  addTopProducts,
 } = require('../../controllers/catalog');
 const { isValidId, authenticate, isAdmin } = require('../../middlewares');
 
@@ -39,6 +41,11 @@ router.post('/search-products', searchProducts);
 
 //получение товаров для баннера
 router.get('/banner', getProductsBanner);
+
+//получение товаров для топ-товаров
+router.get('/top-products', getTopProducts);
+//добавление товаров для топ-товаров
+router.post('/top-products', authenticate, isAdmin, addTopProducts);
 
 //получение товаров для страницы продукта
 router.get('/single-product/:id', isValidId, getOneProduct);

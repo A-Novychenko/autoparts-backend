@@ -11,6 +11,8 @@ const getOneProduct = require('./getOneProduct');
 const generateSitemapCtrl = require('./generateSitemapCtrl');
 const getTotalProducts = require('./getTotalProducts');
 const getBrandsCategories = require('./getBrandsCategories');
+const getTopProducts = require('./getTopProducts');
+const addTopProducts = require('./addTopProducts');
 
 module.exports = {
   getMainCategories: ctrlWrap(getMainCategories),
@@ -24,4 +26,6 @@ module.exports = {
   generateSitemapCtrl: ctrlWrap(generateSitemapCtrl),
   getTotalProducts: ctrlWrap(getTotalProducts),
   getBrandsCategories: ctrlWrap(getBrandsCategories),
+  getTopProducts: ctrlWrap(getTopProducts),
+  addTopProducts: ctrlWrap(addTopProducts),
 };

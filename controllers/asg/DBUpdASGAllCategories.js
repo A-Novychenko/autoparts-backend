@@ -5,22 +5,30 @@ const { serviceASG } = require('../../helpers');
 const ASG_LOGIN = process.env.ASG_LOGIN;
 const ASG_PASSWORD = process.env.ASG_PASSWORD;
 
-const fetchCategoriesWithRetry = async () => {
+const wait = ms => new Promise(r => setTimeout(r, ms));
+
+const fetchCategoriesWithRetry = async (retries = 3, delay = 3000) => {
   try {
     const { data } = await serviceASG.post('/categories');
     return data.data;
   } catch (e) {
-    if (e.response?.status === 401) {
+    const status = e.response?.status;
+    if (status === 401 && retries > 0) {
       console.log('Refreshing token...');
       const credentials = { login: ASG_LOGIN, password: ASG_PASSWORD };
       const resASG = await serviceASG.post('/auth/login', credentials);
       serviceASG.defaults.headers.common.Authorization = `Bearer ${resASG.data.access_token}`;
-      const { data } = await serviceASG.post('/categories');
-      return data.data;
-    } else {
-      console.error('Error fetching categories:', e.message);
-      throw new Error('Failed to fetch categories');
+      return fetchCategoriesWithRetry(retries - 1, delay);
     }
+    if (status === 429 && retries > 0) {
+      const retryAfter = e.response?.headers['retry-after'];
+      const waitTime = retryAfter ? Number(retryAfter) * 1000 : delay;
+      console.warn(`Rate limited. Waiting ${waitTime}ms before retry...`);
+      await wait(waitTime);
+      return fetchCategoriesWithRetry(retries - 1, delay * 2);
+    }
+    console.error('Error fetching categories:', e.message);
+    throw new Error('Failed to fetch categories');
   }
 };
 

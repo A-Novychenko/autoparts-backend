@@ -5,9 +5,9 @@ const { ASGProduct } = require('../../models/asg/products');
 const pLimit = require('p-limit');
 
 const { ASG_LOGIN, ASG_PASSWORD } = process.env;
-const MAX_CONCURRENT_REQUESTS = 30;
+const MAX_CONCURRENT_REQUESTS = 1;
 
-const fetchBatch = async page => {
+const fetchBatch = async (page, retryCount = 0) => {
   try {
     const { data } = await serviceASG.post(`/product-images?page=${page}`);
     return data.data;
@@ -19,6 +19,13 @@ const fetchBatch = async page => {
       serviceASG.defaults.headers.common.Authorization = `Bearer ${resASG.data.access_token}`;
       const { data } = await serviceASG.post(`/product-images?page=${page}`);
       return data.data;
+    } else if (e.response?.status === 429 && retryCount < 5) {
+      const delay = (retryCount + 1) * 5000; // 5s, 10s, 15s, ...
+      console.warn(
+        `429 Too Many Requests on page ${page}. Retry #${retryCount + 1} after ${delay}ms...`,
+      );
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return fetchBatch(page, retryCount + 1);
     } else {
       console.error(`Error fetching page ${page}:`, e.message);
       throw new Error('Failed to fetch data');
@@ -83,7 +90,6 @@ const DBUpdASGAllImages = async (req, res) => {
       await Promise.all(tasks);
     }
 
-    // Определим, какие товары остались без изображений
     const missingProductIds = Array.from(validProductIds).filter(
       id => !insertedIds.has(id),
     );
