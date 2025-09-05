@@ -1,30 +1,12 @@
 const { Order } = require('../../models/orders/order');
 
-const { sendTg, sendEmail } = require('../../helpers');
+const { sendTg, sendEmail, normalizePhoneToLogin } = require('../../helpers');
+const { Client } = require('../../models/clients/clients');
+const { Shipment } = require('../../models/clients/shipments');
 
 const { ADMIN_EMAIL, FRONTEND_URL } = process.env;
 
-const addOrder = async (req, res) => {
-  const result = await Order.create({ ...req.body });
-
-  const calculateTotals = items => ({
-    totalAmountWithDiscount: items.reduce(
-      (sum, item) => sum + (item.price_promo || item.price) * item.quantity,
-      0,
-    ),
-    totalDiscount: items.reduce(
-      (sum, item) =>
-        sum +
-        (item.price_promo ? item.price - item.price_promo : 0) * item.quantity,
-      0,
-    ),
-    totalAmount: items.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0,
-    ),
-  });
-
-  const { totalAmountWithDiscount } = calculateTotals(result.products);
+const makeMsgs = result => {
   const products = result?.products
     ? result.products
         .map(({ brand, article, price, quantity }) => {
@@ -46,7 +28,7 @@ const addOrder = async (req, res) => {
     html: `<p>Новый заказ:${result.number}</p>
     <p>Пользователь: ${result.name} Телефон:${result.phone}</p>
     <ul>${mailProducts}</ul>
-    <p>Товаров: ${result.products.length}шт на сумму:${totalAmountWithDiscount}грн</p>
+    <p>Товаров: ${result.products.length}шт на сумму:${result.totalAmountWithDiscount}грн</p>
     <p><a target="_blank" href="${FRONTEND_URL}/dashboard/orders/order/${result._id}">Открыть заказ </a></p>
     
     <p>Доставка: ${result.delivery === 'post' ? 'Новая Почта' : 'другое'} ${result.deliveryCity} №${result.postOffice}</p>
@@ -58,11 +40,67 @@ const addOrder = async (req, res) => {
 <b>Клиент: ${result.name} ${result.phone}</b>\n
 <b>Доставка: ${result.delivery === 'post' ? 'Новая Почта' : 'другое'} ${result.deliveryCity} №${result.postOffice}</b>\n
 ${products}\n
-<b>Сумма: ${totalAmountWithDiscount}грн</b> \n
+<b>Сумма: ${result.totalAmountWithDiscount}грн</b> \n
 ${result.message ? `<b>Сообщение: ${result.message}</b>` : ''}`;
 
+  return { newTransactionEmail, tgMsg };
+};
+
+const addOrder = async (req, res) => {
+  const { name, phone, email, delivery, deliveryCity, postOffice, payment } =
+    req.body;
+  const login = normalizePhoneToLogin(phone);
+
+  let client = await Client.findOne({ login });
+
+  if (!client) {
+    client = await Client.create({
+      name,
+      phone,
+      email,
+      login,
+      password: '12345678',
+    });
+  }
+
+  let shipmentId;
+
+  const shipment = await Shipment.findOne({
+    client: client._id,
+    delivery,
+    deliveryCity,
+    postOffice,
+    payment,
+    name,
+    phone,
+  }).collation({ locale: 'uk', strength: 1 });
+
+  if (!shipment) {
+    const newShipment = await Shipment.create({
+      client: client._id,
+      delivery,
+      deliveryCity,
+      postOffice,
+      payment,
+      name,
+      phone,
+    });
+
+    shipmentId = newShipment._id;
+  } else {
+    shipmentId = shipment._id;
+  }
+
+  const result = await Order.create({
+    ...req.body,
+    client: client._id,
+    shipment: shipmentId,
+  });
+
+  const { tgMsg, newTransactionEmail } = makeMsgs(result);
+
   try {
-    await Promise.all([sendTg(tgMsg), sendEmail(newTransactionEmail)]);
+    // await Promise.all([sendTg(tgMsg), sendEmail(newTransactionEmail)]);
     // await sendTg(tgMsg);
     // await sendEmail(newTransactionEmail);
   } catch (e) {

@@ -31,7 +31,16 @@ const vinRequestSchema = new Schema(
 
     status: {
       type: String,
-      enum: ['new', 'in-progress', 'rejected', 'done'],
+      enum: [
+        'new',
+        'in-progress',
+        'awaiting-payment',
+        'processed',
+        'sent',
+        'reserve',
+        'rejected',
+        'done',
+      ],
       default: 'new',
     },
 
@@ -90,7 +99,16 @@ const addVinRequestSchema = Joi.object({
 
 const updateVinRequestSchema = Joi.object({
   status: Joi.string()
-    .valid('new', 'in-progress', 'rejected', 'done')
+    .valid(
+      'new',
+      'in-progress',
+      'awaiting-payment',
+      'processed',
+      'sent',
+      'reserve',
+      'rejected',
+      'done',
+    )
     .optional(),
   comment: Joi.string().allow('').optional(),
 });

@@ -6,15 +6,8 @@ const Counter = require('./Counter'); // Підключаємо модель л�
 
 const orderSchema = new Schema(
   {
-    name: {
-      type: String,
-      required: [true, 'Set name !'],
-    },
-    phone: {
-      type: String,
-      required: [true, 'Set phone !'],
-    },
-    email: { type: String, default: '' },
+    client: { type: Schema.Types.ObjectId, ref: 'client' },
+    shipment: { type: Schema.Types.ObjectId, ref: 'shipment' },
     message: { type: String, default: '' },
     comment: { type: String, default: '' },
     delivery: {
@@ -29,6 +22,9 @@ const orderSchema = new Schema(
       enum: ['card', 'cash', 'prepayment', 'cod'],
       default: 'card',
     },
+    totalAmount: { type: Number, required: true },
+    totalAmountWithDiscount: { type: Number, required: true },
+    totalDiscount: { type: Number, required: true },
     products: {
       type: [
         {
@@ -38,7 +34,6 @@ const orderSchema = new Schema(
           },
           id: { type: Number, required: true },
           article: { type: String, required: true },
-          // brand: { type: String, required: true },
           brand: {
             type: String,
             default: '',
@@ -53,30 +48,42 @@ const orderSchema = new Schema(
       ],
       default: [],
     },
-    number: {
-      type: String,
-      default: '',
-    },
+
+    number: { type: String, unique: true },
     status: {
       type: String,
-      enum: ['new', 'in-progress', 'rejected', 'done'],
+      enum: [
+        'new',
+        'in-progress',
+        'awaiting-payment',
+        'processed',
+        'sent',
+        'reserve',
+        'rejected',
+        'done',
+      ],
       default: 'new',
     },
   },
   { versionKey: false, timestamps: true },
 );
 
-// 🟢 Хук для автоінкременту номера
+// 🟢 Хук для автоинкремента с форматом YY00001
 orderSchema.pre('save', async function (next) {
   if (this.isNew) {
     try {
+      // получаем последние 2 цифры года, например 25
+      const year = new Date().getFullYear().toString().slice(-2);
+
       const counter = await Counter.findOneAndUpdate(
         { name: 'order' },
         { $inc: { seq: 1 } },
         { new: true, upsert: true },
       );
 
-      this.number = counter.seq.toString().padStart(4, '0'); // напр. '0001'
+      // формируем номер: 25 + 00001
+      this.number = `${year}${counter.seq.toString().padStart(5, '0')}`;
+
       next();
     } catch (err) {
       next(err);
@@ -125,8 +132,21 @@ const addOrderSchema = Joi.object({
   number: Joi.string().allow('').optional(),
 
   status: Joi.string()
-    .valid('new', 'in-progress', 'rejected', 'done')
+    .valid(
+      'new',
+      'in-progress',
+      'awaiting-payment',
+      'processed',
+      'sent',
+      'reserve',
+      'rejected',
+      'done',
+    )
     .optional(),
+
+  totalAmount: Joi.number().required(),
+  totalAmountWithDiscount: Joi.number().required(),
+  totalDiscount: Joi.number().required(),
 
   products: Joi.array()
     .items(
@@ -134,7 +154,6 @@ const addOrderSchema = Joi.object({
         _id: Joi.string().required(),
         id: Joi.number().required(),
         article: Joi.string().required(),
-        // brand: Joi.string().required(),
         brand: Joi.string().allow('').required(),
         name: Joi.string().required(),
         img: Joi.string().optional(),
@@ -157,7 +176,16 @@ const addOrderSchema = Joi.object({
 
 const updateOrderSchema = Joi.object({
   status: Joi.string()
-    .valid('new', 'in-progress', 'rejected', 'done')
+    .valid(
+      'new',
+      'in-progress',
+      'awaiting-payment',
+      'processed',
+      'sent',
+      'reserve',
+      'rejected',
+      'done',
+    )
     .optional(),
   comment: Joi.string().allow('').optional(),
 });

@@ -20,7 +20,16 @@ const callbackSchema = new Schema(
 
     status: {
       type: String,
-      enum: ['new', 'in-progress', 'rejected', 'done'],
+      enum: [
+        'new',
+        'in-progress',
+        'awaiting-payment',
+        'processed',
+        'sent',
+        'reserve',
+        'rejected',
+        'done',
+      ],
       default: 'new',
     },
   },
@@ -60,7 +69,16 @@ const addCallbackSchema = Joi.object({
 
 const updateCallbackSchema = Joi.object({
   status: Joi.string()
-    .valid('new', 'in-progress', 'rejected', 'done')
+    .valid(
+      'new',
+      'in-progress',
+      'awaiting-payment',
+      'processed',
+      'sent',
+      'reserve',
+      'rejected',
+      'done',
+    )
     .optional(),
   comment: Joi.string().allow('').optional(),
 });

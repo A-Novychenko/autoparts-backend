@@ -3,8 +3,6 @@ const { VinRequest } = require('../../models/orders/vin-request');
 const getOneVinRequest = async (req, res) => {
   const { id } = req.params;
 
-  console.log('id', id);
-
   const result = await VinRequest.findById(id);
 
   res.status(200).json({

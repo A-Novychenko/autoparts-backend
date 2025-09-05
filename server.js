@@ -18,6 +18,7 @@ const asgRouter = require('./routes/api/asg');
 const ordersRouter = require('./routes/api/orders');
 const catalogRouter = require('./routes/api/catalog');
 const cmsCatalogRouter = require('./routes/api/cmsCatalog');
+const clientsRouter = require('./routes/api/clients');
 
 const app = express();
 
@@ -38,6 +39,7 @@ app.use('/api/asg', asgRouter);
 app.use('/api/orders', ordersRouter);
 app.use('/api/catalog', catalogRouter);
 app.use('/api/cms-catalog', cmsCatalogRouter);
+app.use('/api/clients', clientsRouter);
 app.use('/sitemaps', express.static(path.join(__dirname, 'public/sitemaps')));
 
 app.use((_, res, __) => {
