@@ -3,8 +3,9 @@ const { Order } = require('../../models/orders/order');
 const { sendTg, sendEmail, normalizePhoneToLogin } = require('../../helpers');
 const { Client } = require('../../models/clients/clients');
 const { Shipment } = require('../../models/clients/shipments');
+const { ASGProduct } = require('../../models/asg/products');
 
-const { ADMIN_EMAIL, FRONTEND_URL } = process.env;
+const { ADMIN_EMAIL, FRONTEND_URL, SERVER_MODE } = process.env;
 
 const makeMsgs = result => {
   const products = result?.products
@@ -47,8 +48,16 @@ ${result.message ? `<b>Сообщение: ${result.message}</b>` : ''}`;
 };
 
 const addOrder = async (req, res) => {
-  const { name, phone, email, delivery, deliveryCity, postOffice, payment } =
-    req.body;
+  const {
+    name,
+    phone,
+    email,
+    delivery,
+    deliveryCity,
+    postOffice,
+    payment,
+    products,
+  } = req.body;
   const login = normalizePhoneToLogin(phone);
 
   let client = await Client.findOne({ login });
@@ -91,8 +100,27 @@ const addOrder = async (req, res) => {
     shipmentId = shipment._id;
   }
 
+  const productsIds = products && products.map(({ _id }) => _id);
+
+  const productsDocs = await ASGProduct.find(
+    { _id: { $in: productsIds } },
+    { price_currency_980: 1 },
+  );
+
+  const productsWithSupplierPrice = products.map(product => {
+    const s = productsDocs.find(
+      el => el._id.toString() === product._id.toString(),
+    );
+
+    return {
+      ...product,
+      supplierPrice: s ? s.price_currency_980 : null, // если вдруг не найдётся
+    };
+  });
+
   const result = await Order.create({
     ...req.body,
+    products: productsWithSupplierPrice,
     client: client._id,
     shipment: shipmentId,
   });
@@ -100,9 +128,9 @@ const addOrder = async (req, res) => {
   const { tgMsg, newTransactionEmail } = makeMsgs(result);
 
   try {
-    // await Promise.all([sendTg(tgMsg), sendEmail(newTransactionEmail)]);
-    // await sendTg(tgMsg);
-    // await sendEmail(newTransactionEmail);
+    if (SERVER_MODE === 'prod') {
+      await Promise.all([sendTg(tgMsg), sendEmail(newTransactionEmail)]);
+    }
   } catch (e) {
     console.log('e', e);
   }

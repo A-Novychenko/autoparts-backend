@@ -14,6 +14,13 @@ const {
   addCallback,
   getAllCallback,
   updateCallback,
+  addDeclarationNumber,
+  delDeclarationNumber,
+  updatePaymentStatusOrder,
+  chooseShipmentOrder,
+  editPriceAndQtyOrder,
+  addProduct,
+  delProduct,
 } = require('../../controllers/orders');
 const { validateBody } = require('../../decorators');
 const { schemasVinRequest } = require('../../models/orders/vin-request');
@@ -48,6 +55,55 @@ router.post(
 
 router.get('/:id', authenticate, isValidId, getOneOrder);
 router.get('/status/:id', isValidId, getOrderStatus);
+router.post(
+  '/declaration/:id',
+  authenticate,
+  isValidId,
+  validateBody(schemasOrder.declarationNumbersOrderSchema),
+  addDeclarationNumber,
+);
+router.post(
+  '/declaration-delete/:id',
+  authenticate,
+  isValidId,
+  validateBody(schemasOrder.declarationNumbersOrderSchema),
+  delDeclarationNumber,
+);
+router.patch(
+  '/pay/:id',
+  authenticate,
+  isValidId,
+  validateBody(schemasOrder.changePaymentStatusOrderSchema),
+  updatePaymentStatusOrder,
+);
+router.patch(
+  '/choose-shipment/:id',
+  authenticate,
+  isValidId,
+  validateBody(schemasOrder.chooseShipmentOrderSchema),
+  chooseShipmentOrder,
+);
+router.patch(
+  '/crm-editing/:id',
+  authenticate,
+  isValidId,
+  validateBody(schemasOrder.editingPriceAndQtyOrderSchema),
+  editPriceAndQtyOrder,
+);
+router.patch(
+  '/add-product/:id',
+  authenticate,
+  isValidId,
+  validateBody(schemasOrder.addProductOrderSchema),
+  addProduct,
+);
+
+router.delete(
+  '/del-product/:id/:productId',
+  authenticate,
+  isValidId,
+  delProduct,
+);
 router.patch(
   '/:id',
   authenticate,

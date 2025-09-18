@@ -6,22 +6,28 @@ const Counter = require('./Counter'); // Підключаємо модель л�
 
 const orderSchema = new Schema(
   {
+    number: { type: String, unique: true },
+    status: {
+      type: String,
+      enum: [
+        'new',
+        'in-progress',
+        'awaiting-payment',
+        'processed',
+        'sent',
+        'reserve',
+        'rejected',
+        'done',
+      ],
+      default: 'new',
+    },
+
     client: { type: Schema.Types.ObjectId, ref: 'client' },
     shipment: { type: Schema.Types.ObjectId, ref: 'shipment' },
+
     message: { type: String, default: '' },
     comment: { type: String, default: '' },
-    delivery: {
-      type: String,
-      enum: ['pickup', 'post'],
-      default: 'pickup',
-    },
-    deliveryCity: { type: String, default: '' },
-    postOffice: { type: String, default: '' },
-    payment: {
-      type: String,
-      enum: ['card', 'cash', 'prepayment', 'cod'],
-      default: 'card',
-    },
+
     totalAmount: { type: Number, required: true },
     totalAmountWithDiscount: { type: Number, required: true },
     totalDiscount: { type: Number, required: true },
@@ -40,30 +46,24 @@ const orderSchema = new Schema(
           },
           name: { type: String, required: true },
           img: { type: String, default: '' },
+          comment: { type: String, default: '' },
+          supplierPrice: { type: Number, required: true },
           price: { type: Number, required: true },
           price_promo: { type: Number, default: null },
           quantity: { type: Number, required: true },
           availability: { type: String, required: true },
+          availabilityLviv: { type: String, required: true },
+          availabilityOther: { type: String, default: null },
         },
       ],
       default: [],
     },
 
-    number: { type: String, unique: true },
-    status: {
-      type: String,
-      enum: [
-        'new',
-        'in-progress',
-        'awaiting-payment',
-        'processed',
-        'sent',
-        'reserve',
-        'rejected',
-        'done',
-      ],
-      default: 'new',
-    },
+    declarationNumber: { type: [String], default: [] },
+    isPaid: { type: Boolean, default: false },
+
+    createdBy: { type: String, default: null },
+    updatedBy: { type: String, default: null },
   },
   { versionKey: false, timestamps: true },
 );
@@ -162,6 +162,7 @@ const addOrderSchema = Joi.object({
         quantity: Joi.number().required(),
         availability: Joi.string().allow('').optional(),
         availabilityLviv: Joi.string().allow('').optional(),
+        availabilityOther: Joi.string().allow(null).optional(),
       }),
     )
     .min(1)
@@ -190,9 +191,53 @@ const updateOrderSchema = Joi.object({
   comment: Joi.string().allow('').optional(),
 });
 
+const changePaymentStatusOrderSchema = Joi.object({
+  isPaid: Joi.boolean(),
+});
+const chooseShipmentOrderSchema = Joi.object({
+  shipmentId: Joi.string().required(),
+});
+
+const declarationNumbersOrderSchema = Joi.object({
+  declarationNumber: Joi.string().min(14).max(14).required().messages({
+    'any.required': 'declarationNumber is required',
+    'string.empty':
+      'The declarationNumber cannot be empty. It will be has 14 numbers ',
+  }),
+});
+
+const editingPriceAndQtyOrderSchema = Joi.object({
+  quantity: Joi.number().required(),
+  price_promo: Joi.number().allow(null).required(),
+  productId: Joi.string().required(),
+  comment: Joi.string().allow('').optional(),
+});
+
+const addProductOrderSchema = Joi.object({
+  _id: Joi.string().allow('').optional(),
+  id: Joi.number().required(),
+  article: Joi.string().required(),
+  brand: Joi.string().allow('').required(),
+  name: Joi.string().required(),
+  img: Joi.string().optional(),
+  price: Joi.number().required(),
+  price_promo: Joi.number().allow(null).optional(),
+  quantity: Joi.number().required(),
+  availability: Joi.string().allow('').optional(),
+  availabilityLviv: Joi.string().allow('').optional(),
+  availabilityOther: Joi.string().allow(null).optional(),
+  comment: Joi.string().allow('').optional(),
+  supplierPrice: Joi.number().allow(null).optional(),
+});
+
 const schemasOrder = {
   addOrderSchema,
   updateOrderSchema,
+  declarationNumbersOrderSchema,
+  changePaymentStatusOrderSchema,
+  chooseShipmentOrderSchema,
+  editingPriceAndQtyOrderSchema,
+  addProductOrderSchema,
 };
 
 const Order = model('order', orderSchema);

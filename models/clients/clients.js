@@ -17,7 +17,9 @@ const clientSchema = new Schema(
       required: [true, 'Set phone !'],
     },
     email: { type: String, default: '' },
-
+    company: { type: String, default: null },
+    totalSpent: { type: Number, default: 0 },
+    discountRate: { type: Number, default: 0 },
     shipment: { type: Schema.Types.ObjectId, ref: 'shipment' },
 
     login: {

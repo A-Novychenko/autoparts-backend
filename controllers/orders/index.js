@@ -12,6 +12,13 @@ const updateOrder = require('./updateOrder');
 const addCallback = require('./addCallback');
 const getAllCallback = require('./getAllCallback');
 const updateCallback = require('./updateCallback');
+const addDeclarationNumber = require('./addDeclarationNumber');
+const delDeclarationNumber = require('./delDeclarationNumber');
+const updatePaymentStatusOrder = require('./updatePaymentStatusOrder');
+const chooseShipmentOrder = require('./chooseShipmentOrder');
+const editPriceAndQtyOrder = require('./editPriceAndQtyOrder');
+const addProduct = require('./addProduct');
+const delProduct = require('./delProduct');
 
 module.exports = {
   getAllVinRequests: ctrlWrap(getAllVinRequests),
@@ -26,4 +33,11 @@ module.exports = {
   addCallback: ctrlWrap(addCallback),
   getAllCallback: ctrlWrap(getAllCallback),
   updateCallback: ctrlWrap(updateCallback),
+  addDeclarationNumber: ctrlWrap(addDeclarationNumber),
+  delDeclarationNumber: ctrlWrap(delDeclarationNumber),
+  updatePaymentStatusOrder: ctrlWrap(updatePaymentStatusOrder),
+  chooseShipmentOrder: ctrlWrap(chooseShipmentOrder),
+  editPriceAndQtyOrder: ctrlWrap(editPriceAndQtyOrder),
+  addProduct: ctrlWrap(addProduct),
+  delProduct: ctrlWrap(delProduct),
 };

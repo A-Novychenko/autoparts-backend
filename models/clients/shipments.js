@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { handleMongooseError } = require('../../helpers');
+const Joi = require('joi');
 
 const { Schema, model } = mongoose;
 
@@ -28,12 +29,54 @@ const shipmentSchema = new Schema(
       enum: ['card', 'cash', 'prepayment', 'cod'],
       default: 'card',
     },
+    company: { type: String, default: null },
+    deliveryPayment: {
+      type: String,
+      enum: ['client', 'shop', 'clientBank', 'shopBank'],
+      default: 'client',
+    },
   },
   { versionKey: false, timestamps: true },
 );
 
 shipmentSchema.post('save', handleMongooseError);
 
+const addShipmentSchema = Joi.object({
+  client: Joi.string().hex().length(24).required(), // ObjectId
+  name: Joi.string().min(2).max(64).required(),
+  phone: Joi.string().required(),
+  delivery: Joi.string().valid('pickup', 'post').default('post'),
+  deliveryCity: Joi.string().allow('', null).default(''),
+  postOffice: Joi.string().allow('', null).default(''),
+  payment: Joi.string()
+    .valid('card', 'cash', 'prepayment', 'cod')
+    .default('prepayment'),
+  deliveryPayment: Joi.string()
+    .valid('client', 'shop', 'clientBank', 'shopBank')
+    .default('client'),
+  company: Joi.string().allow(null, ''),
+});
+
+const updShipmentSchema = Joi.object({
+  name: Joi.string().min(2).max(64).required(),
+  phone: Joi.string().required(),
+  delivery: Joi.string().valid('pickup', 'post').default('post'),
+  deliveryCity: Joi.string().allow('', null).default(''),
+  postOffice: Joi.string().allow('', null).default(''),
+  payment: Joi.string()
+    .valid('card', 'cash', 'prepayment', 'cod')
+    .default('prepayment'),
+  deliveryPayment: Joi.string()
+    .valid('client', 'shop', 'clientBank', 'shopBank')
+    .default('client'),
+  company: Joi.string().allow(null, ''),
+});
+
 const Shipment = model('shipment', shipmentSchema);
 
-module.exports = { Shipment, schemasClient: {} };
+const schemasShipment = {
+  addShipmentSchema,
+  updShipmentSchema,
+};
+
+module.exports = { Shipment, schemasShipment };
