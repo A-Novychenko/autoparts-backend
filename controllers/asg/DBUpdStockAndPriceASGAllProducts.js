@@ -2,7 +2,7 @@ const { asgUpdStockAndPriceFunc } = require('../../helpers');
 
 const DBUpdStockAndPriceASGAllProducts = async (req, res) => {
   try {
-    const failedPages = await asgUpdStockAndPriceFunc();
+    const { failedPages, updated } = await asgUpdStockAndPriceFunc();
 
     if (failedPages.length > 0) {
       res.status(207).json({

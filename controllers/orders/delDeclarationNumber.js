@@ -3,6 +3,7 @@ const { Order } = require('../../models/orders/order');
 const { HttpError } = require('../../helpers');
 
 const delDeclarationNumber = async (req, res) => {
+  const { user } = req;
   const { id } = req.params;
   const { declarationNumber } = req.body;
 
@@ -26,11 +27,16 @@ const delDeclarationNumber = async (req, res) => {
     id,
     {
       declarationNumber: updDeclarationNumber,
+      updatedBy: user.name,
     },
     { new: true },
   );
 
-  res.status(204).end();
+  res.status(200).json({
+    status: 'success',
+    code: 200,
+    updatedBy: user.name,
+  });
 };
 
 module.exports = delDeclarationNumber;

@@ -22,8 +22,8 @@ const orderSchema = new Schema(
       default: 'new',
     },
 
-    client: { type: Schema.Types.ObjectId, ref: 'client' },
-    shipment: { type: Schema.Types.ObjectId, ref: 'shipment' },
+    client: { type: Schema.Types.ObjectId, ref: 'client', default: null },
+    shipment: { type: Schema.Types.ObjectId, ref: 'shipment', default: null },
 
     message: { type: String, default: '' },
     comment: { type: String, default: '' },
@@ -31,6 +31,9 @@ const orderSchema = new Schema(
     totalAmount: { type: Number, required: true },
     totalAmountWithDiscount: { type: Number, required: true },
     totalDiscount: { type: Number, required: true },
+
+    isAccounted: { type: Boolean, default: false },
+
     products: {
       type: [
         {
@@ -165,7 +168,7 @@ const addOrderSchema = Joi.object({
         availabilityOther: Joi.string().allow(null).optional(),
       }),
     )
-    .min(1)
+    // .min(1)
     .required()
     .messages({
       'array.base': 'The products field must be an array',
@@ -230,6 +233,10 @@ const addProductOrderSchema = Joi.object({
   supplierPrice: Joi.number().allow(null).optional(),
 });
 
+const chooseClientOrderSchema = Joi.object({
+  clientId: Joi.string().required(),
+});
+
 const schemasOrder = {
   addOrderSchema,
   updateOrderSchema,
@@ -238,6 +245,7 @@ const schemasOrder = {
   chooseShipmentOrderSchema,
   editingPriceAndQtyOrderSchema,
   addProductOrderSchema,
+  chooseClientOrderSchema,
 };
 
 const Order = model('order', orderSchema);

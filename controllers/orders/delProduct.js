@@ -2,10 +2,8 @@ const { HttpError } = require('../../helpers');
 const { Order } = require('../../models/orders/order');
 
 const delProduct = async (req, res) => {
+  const { user } = req;
   const { id, productId } = req.params;
-
-  console.log('id', id);
-  console.log('productId', productId);
 
   const order = await Order.findById(id);
   if (!order) {
@@ -16,16 +14,49 @@ const delProduct = async (req, res) => {
     order.products.find(({ _id }) => _id.toString() === productId.toString()),
   );
 
-  console.log('hasProduct', hasProduct);
-  const updProducts = order.products.filter(
+  if (!hasProduct) {
+    throw HttpError(404, 'Product in this order not found');
+  }
+
+  const products = order.products.filter(
     ({ _id }) => _id.toString() !== productId.toString(),
   );
 
-  await Order.findByIdAndUpdate(id, { products: updProducts });
+  const totalAmountWithDiscount = products.reduce(
+    (acc, el) =>
+      acc + (el.price_promo ? el.price_promo : el.price) * el.quantity,
+    0,
+  );
+
+  const totalAmount = products.reduce(
+    (acc, el) => acc + el.price * el.quantity,
+    0,
+  );
+
+  const totalDiscount = totalAmount - totalAmountWithDiscount;
+
+  await Order.findByIdAndUpdate(
+    id,
+    {
+      products,
+      totalAmount,
+      totalAmountWithDiscount,
+      totalDiscount,
+      updatedBy: user.name,
+    },
+    { new: true },
+  );
 
   res.status(200).json({
     status: 'success',
     code: 200,
+    products,
+    orderData: {
+      totalAmount,
+      totalAmountWithDiscount,
+      totalDiscount,
+      updatedBy: user.name,
+    },
   });
 };
 

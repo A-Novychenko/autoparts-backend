@@ -1,3 +1,4 @@
+const { HttpError } = require('../../helpers');
 const { User } = require('../../models/user');
 
 const removeUser = async (req, res) => {

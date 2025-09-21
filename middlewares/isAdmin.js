@@ -1,3 +1,5 @@
+const { HttpError } = require('../helpers');
+
 const isAdmin = async (req, res, next) => {
   const { role } = req.user;
 

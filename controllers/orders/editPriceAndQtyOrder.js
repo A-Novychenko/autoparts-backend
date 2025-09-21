@@ -2,6 +2,7 @@ const { HttpError } = require('../../helpers');
 const { Order } = require('../../models/orders/order');
 
 const editPriceAndQtyOrder = async (req, res) => {
+  const { user } = req;
   const { id } = req.params;
   const { quantity, price_promo, productId, comment } = req.body;
 
@@ -38,6 +39,7 @@ const editPriceAndQtyOrder = async (req, res) => {
       totalAmount,
       totalAmountWithDiscount,
       totalDiscount,
+      updatedBy: user.name,
     },
     { new: true },
   );
@@ -45,9 +47,7 @@ const editPriceAndQtyOrder = async (req, res) => {
   res.status(200).json({
     status: 'success',
     code: 200,
-    data: {
-      updOrder,
-    },
+    updOrder,
   });
 };
 

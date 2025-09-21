@@ -19,6 +19,10 @@ const chooseShipmentOrder = require('./chooseShipmentOrder');
 const editPriceAndQtyOrder = require('./editPriceAndQtyOrder');
 const addProduct = require('./addProduct');
 const delProduct = require('./delProduct');
+const addCmsOrder = require('./addCmsOrder');
+const chooseClientOrder = require('./chooseClientOrder');
+const deleteOrder = require('./deleteOrder');
+const accountingOrder = require('./accountingOrder');
 
 module.exports = {
   getAllVinRequests: ctrlWrap(getAllVinRequests),
@@ -40,4 +44,8 @@ module.exports = {
   editPriceAndQtyOrder: ctrlWrap(editPriceAndQtyOrder),
   addProduct: ctrlWrap(addProduct),
   delProduct: ctrlWrap(delProduct),
+  addCmsOrder: ctrlWrap(addCmsOrder),
+  chooseClientOrder: ctrlWrap(chooseClientOrder),
+  deleteOrder: ctrlWrap(deleteOrder),
+  accountingOrder: ctrlWrap(accountingOrder),
 };

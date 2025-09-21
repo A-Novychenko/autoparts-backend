@@ -1,10 +1,10 @@
 const { HttpError } = require('../../helpers');
 const { Order } = require('../../models/orders/order');
 
-const chooseShipmentOrder = async (req, res) => {
+const chooseClientOrder = async (req, res) => {
   const { user } = req;
   const { id } = req.params;
-  const { shipmentId } = req.body;
+  const { clientId } = req.body;
 
   const order = await Order.findById(id);
 
@@ -15,9 +15,10 @@ const chooseShipmentOrder = async (req, res) => {
   const updOrder = await Order.findByIdAndUpdate(
     id,
     {
-      shipment: shipmentId,
+      client: clientId,
       updatedBy: user.name,
     },
+
     { new: true },
   )
     .populate('client')
@@ -28,7 +29,8 @@ const chooseShipmentOrder = async (req, res) => {
     status: 'OK',
     order: updOrder,
     updatedBy: user.name,
+    client: updOrder.client,
   });
 };
 
-module.exports = chooseShipmentOrder;
+module.exports = chooseClientOrder;

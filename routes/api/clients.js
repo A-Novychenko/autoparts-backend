@@ -9,6 +9,7 @@ const {
   updShipment,
   fetchOneClient,
   deleteShipment,
+  searchClients,
 } = require('../../controllers/clients');
 const { validateBody } = require('../../decorators');
 const { schemasShipment } = require('../../models/clients/shipments');
@@ -18,6 +19,8 @@ const router = express.Router();
 router.post('/new', authenticate, addClient);
 
 router.get('/', authenticate, fetchClients);
+
+router.get('/search', authenticate, searchClients);
 
 router.get('/shipment/:id', authenticate, isValidId, fetchShipmentsByClient);
 

@@ -11,6 +11,7 @@ const searchProducts = async (req, res) => {
   try {
     article = decodeURIComponent(article).trim().toLowerCase();
   } catch (e) {
+    console.log('e', e);
     throw HttpError(400, 'Invalid URI encoding');
   }
 

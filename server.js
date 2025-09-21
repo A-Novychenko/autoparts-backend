@@ -51,6 +51,7 @@ app.use((_, res, __) => {
   });
 });
 
+// eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   const { status = 500, message = 'Server error' } = err;
   const { statusText, codeErr, messageDescr, dataDescr } = createErrorReq(

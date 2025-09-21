@@ -4,8 +4,6 @@ const { transformedProductsBySite } = require('../../helpers');
 const { TopProduct } = require('../../models/orders/topProducts');
 
 const getTopProducts = async (req, res) => {
-  const productsIds = await TopProduct.find({});
-
   const topDocs = await TopProduct.find({});
   const productArticles = topDocs.map(doc => doc.tecdoc_article);
 

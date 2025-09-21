@@ -38,8 +38,8 @@ const makeMsgs = result => {
   };
 
   const tgMsg = `<b>Новый заказ №${result.number}</b>\n
-<b>Клиент: ${result.name} ${result.phone}</b>\n
-<b>Доставка: ${result.delivery === 'post' ? 'Новая Почта' : 'другое'} ${result.deliveryCity} №${result.postOffice}</b>\n
+<b>Клиент: ${result.client.name} ${result.client.phone}</b>\n
+<b>Доставка: ${result.shipment.delivery === 'post' ? 'Новая Почта' : 'другое'} ${result.shipment.deliveryCity} №${result.shipment.postOffice}</b>\n
 ${products}\n
 <b>Сумма: ${result.totalAmountWithDiscount}грн</b> \n
 ${result.message ? `<b>Сообщение: ${result.message}</b>` : ''}`;
@@ -118,12 +118,19 @@ const addOrder = async (req, res) => {
     };
   });
 
-  const result = await Order.create({
+  const newOrder = await Order.create({
     ...req.body,
     products: productsWithSupplierPrice,
     client: client._id,
     shipment: shipmentId,
+    createdBy: 'avto-magaz.com.ua',
+    updatedBy: 'avto-magaz.com.ua',
   });
+
+  const result = await Order.findById(newOrder._id).populate([
+    'client',
+    'shipment',
+  ]);
 
   const { tgMsg, newTransactionEmail } = makeMsgs(result);
 

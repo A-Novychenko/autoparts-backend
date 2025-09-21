@@ -20,7 +20,7 @@ const clientSchema = new Schema(
     company: { type: String, default: null },
     totalSpent: { type: Number, default: 0 },
     discountRate: { type: Number, default: 0 },
-    shipment: { type: Schema.Types.ObjectId, ref: 'shipment' },
+    shipment: { type: Schema.Types.ObjectId, ref: 'shipment', default: null },
 
     login: {
       type: String,

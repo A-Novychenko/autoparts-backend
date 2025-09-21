@@ -21,6 +21,10 @@ const {
   editPriceAndQtyOrder,
   addProduct,
   delProduct,
+  addCmsOrder,
+  chooseClientOrder,
+  deleteOrder,
+  accountingOrder,
 } = require('../../controllers/orders');
 const { validateBody } = require('../../decorators');
 const { schemasVinRequest } = require('../../models/orders/vin-request');
@@ -36,6 +40,7 @@ router.post(
   validateBody(schemasOrder.addOrderSchema),
   addOrder,
 );
+router.post('/add-cms-order', authenticate, addCmsOrder);
 
 router.get('/vin-requests', authenticate, getAllVinRequests);
 router.post(
@@ -84,7 +89,14 @@ router.patch(
   chooseShipmentOrder,
 );
 router.patch(
-  '/crm-editing/:id',
+  '/choose-client/:id',
+  authenticate,
+  isValidId,
+  validateBody(schemasOrder.chooseClientOrderSchema),
+  chooseClientOrder,
+);
+router.patch(
+  '/cms-editing/:id',
   authenticate,
   isValidId,
   validateBody(schemasOrder.editingPriceAndQtyOrderSchema),
@@ -104,6 +116,10 @@ router.delete(
   isValidId,
   delProduct,
 );
+router.delete('/delete-order/:id', authenticate, isValidId, deleteOrder);
+
+router.patch('/accounting/:id', authenticate, isValidId, accountingOrder);
+
 router.patch(
   '/:id',
   authenticate,

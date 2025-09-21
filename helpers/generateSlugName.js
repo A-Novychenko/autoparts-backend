@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 const generateSlugName = name => {
   const map = {
     а: 'a',

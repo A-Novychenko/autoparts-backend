@@ -1,6 +1,6 @@
 const transformedProductsBySite = products => {
   return products.map(product => {
-    const marginValue = product?.margin ? product.margin : 10;
+    const marginValue = product?.margin ? product.margin : 16;
     const margin = marginValue / 100;
 
     const price_currency_980_to_number = parseFloat(product.price_currency_980);

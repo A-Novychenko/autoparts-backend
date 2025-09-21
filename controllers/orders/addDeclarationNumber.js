@@ -3,6 +3,7 @@ const { Order } = require('../../models/orders/order');
 const { HttpError } = require('../../helpers');
 
 const addDeclarationNumber = async (req, res) => {
+  const { user } = req;
   const { id } = req.params;
   const { declarationNumber } = req.body;
 
@@ -22,6 +23,7 @@ const addDeclarationNumber = async (req, res) => {
     id,
     {
       declarationNumber: updDeclarationNumber,
+      updatedBy: user.name,
     },
     { new: true },
   );

@@ -1,5 +1,3 @@
-const { HttpError } = require('../../helpers');
-
 const getCurrentUser = async (req, res) => {
   const { user } = req;
 

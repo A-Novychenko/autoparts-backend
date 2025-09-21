@@ -12,10 +12,9 @@ const getCmsProductsByArticle = async (req, res) => {
     });
   }
 
-  // Нормализация артикула
   const normalizedArticle = article.trim();
 
-  // Поиск продуктов по частичному совпадению (регулярка, без учета регистра)
+  // Ищем продукты
   const products = await ASGProduct.aggregate([
     {
       $match: {
@@ -35,12 +34,29 @@ const getCmsProductsByArticle = async (req, res) => {
     },
     {
       $addFields: {
-        img: { $arrayElemAt: ['$images.images', 0] }, // Первое изображение
+        img: { $arrayElemAt: ['$images.images', 0] },
       },
     },
     { $unset: 'images' },
+
+    // 🔥 ДОБАВЛЯЕМ lookup для категорий
+    {
+      $lookup: {
+        from: 'asgcategories', // имя коллекции категорий
+        localField: 'category_id',
+        foreignField: 'id', // предполагаю, что id в категории — это её идентификатор
+        as: 'category',
+      },
+    },
+    {
+      $addFields: {
+        margin: { $ifNull: [{ $arrayElemAt: ['$category.margin', 0] }, 16] }, // берём margin или 16, если нет категории
+      },
+    },
+    { $unset: 'category' },
   ]);
 
+  // Теперь у каждого продукта есть margin
   const transformedProducts = transformedProductsByCMS(products);
 
   res.json({

@@ -27,7 +27,7 @@ const cronUpdPriceAndStockAsg = async () => {
   console.log('⏰ Запуск обновления остатков', date);
 
   try {
-    const failedPages = await asgUpdStockAndPriceFunc();
+    const { failedPages } = await asgUpdStockAndPriceFunc();
 
     const isSuccess = !failedPages.length > 0;
     const failedQty = failedPages.length;

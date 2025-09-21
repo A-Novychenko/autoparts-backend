@@ -2,6 +2,7 @@ const { HttpError } = require('../../helpers');
 const { Order } = require('../../models/orders/order');
 
 const updatePaymentStatusOrder = async (req, res) => {
+  const { user } = req;
   const { id } = req.params;
   const { isPaid } = req.body;
 
@@ -11,11 +12,16 @@ const updatePaymentStatusOrder = async (req, res) => {
     throw HttpError(404);
   }
 
-  await Order.findByIdAndUpdate(id, { isPaid });
+  await Order.findByIdAndUpdate(id, {
+    isPaid,
+    updatedBy: user.name,
+  });
 
   res.status(200).json({
     code: 200,
     status: 'OK',
+    isPaid,
+    updatedBy: user.name,
   });
 };
 

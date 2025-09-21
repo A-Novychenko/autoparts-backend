@@ -4,7 +4,7 @@ const { User } = require('../../models/user');
 
 const { ACCESS_SECRET_KEY, REFRESH_SECRET_KEY } = process.env;
 
-const refresh = async (req, res, next) => {
+const refresh = async (req, res) => {
   const { refreshToken: oldRefreshToken } = req.body;
 
   try {

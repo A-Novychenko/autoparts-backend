@@ -10,8 +10,8 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production node ./server.js",
     "dev": "cross-env NODE_ENV=development nodemon ./server.js",
-    "lint": "eslint **/*.js",
-    "lint:fix": "eslint --fix **/*.js",
+    "lint": "eslint . --ext .js,.mjs,.cjs",
+    "lint:fix": "eslint . --ext .js,.mjs,.cjs --fix",
     "generate-sitemap": "node helpers/generateSitemapFunc.js"
   },
   "repository": "https://github.com/A-Novychenko/autoparts-backend.git",
@@ -34,12 +34,16 @@
     "nodemailer": "^7.0.3"
   },
   "devDependencies": {
-    "eslint": "^8.56.0",
+    "@eslint/js": "^9.35.0",
+    "eslint": "^9.35.0",
+    "eslint-config-node": "^4.1.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-standard": "^17.1.0",
-    "eslint-plugin-import": "^2.29.1",
+    "eslint-define-config": "^2.1.0",
+    "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.1.1",
+    "globals": "^16.4.0",
     "nodemon": "^3.0.3",
     "prettier": "^3.2.5"
   }

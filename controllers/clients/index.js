@@ -7,6 +7,7 @@ const addShipment = require('./addShipment');
 const updShipment = require('./updShipment');
 const fetchOneClient = require('./fetchOneClient');
 const deleteShipment = require('./deleteShipment');
+const searchClients = require('./searchClients');
 
 module.exports = {
   addClient: ctrlWrap(addClient),
@@ -16,4 +17,5 @@ module.exports = {
   updShipment: ctrlWrap(updShipment),
   fetchOneClient: ctrlWrap(fetchOneClient),
   deleteShipment: ctrlWrap(deleteShipment),
+  searchClients: ctrlWrap(searchClients),
 };

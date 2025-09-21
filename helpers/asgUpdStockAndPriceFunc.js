@@ -175,7 +175,7 @@ const asgUpdStockAndPriceFunc = async () => {
   // Обнуление
   await resetMissingStocks(knownIds);
 
-  return failedPages;
+  return { failedPages, updated };
 };
 
 module.exports = asgUpdStockAndPriceFunc;

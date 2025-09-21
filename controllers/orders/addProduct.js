@@ -3,6 +3,7 @@ const { HttpError } = require('../../helpers');
 const { Order } = require('../../models/orders/order');
 
 const addProduct = async (req, res) => {
+  const { user } = req;
   const { id } = req.params;
   const product = req.body;
 
@@ -38,6 +39,7 @@ const addProduct = async (req, res) => {
       totalAmount,
       totalAmountWithDiscount,
       totalDiscount,
+      updatedBy: user.name,
     },
     { new: true },
   );
@@ -46,6 +48,12 @@ const addProduct = async (req, res) => {
     status: 'success',
     code: 200,
     products: updOrder.products,
+    orderData: {
+      totalAmount,
+      totalAmountWithDiscount,
+      totalDiscount,
+      updatedBy: user.name,
+    },
   });
 };
 
