@@ -9,7 +9,7 @@ const getProductsForCartByIds = async (req, res) => {
     ? ids.map(id => Number(id)) // Якщо це масив
     : ids.split(',').map(id => Number(id.trim())); // Якщо це рядок
 
-  console.log('productIds', productIds);
+  // console.log('productIds', productIds);
 
   // Отримання та сортування товарів
   const products = await ASGProduct.aggregate([

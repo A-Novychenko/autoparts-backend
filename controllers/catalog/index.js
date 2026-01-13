@@ -13,6 +13,14 @@ const getTotalProducts = require('./getTotalProducts');
 const getBrandsCategories = require('./getBrandsCategories');
 const getTopProducts = require('./getTopProducts');
 const addTopProducts = require('./addTopProducts');
+const addGroup = require('./addGroup');
+const getAllGroups = require('./getAllGroups');
+const deleteGroup = require('./deleteGroup');
+const updateGroup = require('./updateGroup');
+const updateGroupImg = require('./updateGroupImg');
+const deleteGroupImg = require('./deleteGroupImg');
+const updProductGroup = require('./updProductGroup');
+const getProductsByGroup = require('./getProductsByGroup');
 
 module.exports = {
   getMainCategories: ctrlWrap(getMainCategories),
@@ -28,4 +36,12 @@ module.exports = {
   getBrandsCategories: ctrlWrap(getBrandsCategories),
   getTopProducts: ctrlWrap(getTopProducts),
   addTopProducts: ctrlWrap(addTopProducts),
+  addGroup: ctrlWrap(addGroup),
+  getAllGroups: ctrlWrap(getAllGroups),
+  deleteGroup: ctrlWrap(deleteGroup),
+  updateGroup: ctrlWrap(updateGroup),
+  updateGroupImg: ctrlWrap(updateGroupImg),
+  deleteGroupImg: ctrlWrap(deleteGroupImg),
+  updProductGroup: ctrlWrap(updProductGroup),
+  getProductsByGroup: ctrlWrap(getProductsByGroup),
 };

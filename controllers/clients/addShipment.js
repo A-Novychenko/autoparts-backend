@@ -13,7 +13,7 @@ const addShipment = async (req, res) => {
 
   const newShipment = await Shipment.create(req.body);
 
-  console.log('newShipment', newShipment);
+  // console.log('newShipment', newShipment);
 
   res.status(201).json({
     code: 201,

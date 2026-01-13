@@ -15,6 +15,7 @@ const generateSitemapFunc = require('./generateSitemapFunc');
 const asgUpdStockAndPriceFunc = require('./asgUpdStockAndPriceFunc');
 const cronUpdPriceAndStockAsg = require('./cronUpdPriceAndStockAsg');
 const normalizePhoneToLogin = require('./normalizePhoneToLogin');
+const buildAncestors = require('./buildAncestors');
 
 module.exports = {
   HttpError,
@@ -34,4 +35,5 @@ module.exports = {
   asgUpdStockAndPriceFunc,
   cronUpdPriceAndStockAsg,
   normalizePhoneToLogin,
+  buildAncestors,
 };

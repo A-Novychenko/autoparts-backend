@@ -18,6 +18,13 @@ const ASGProductSchema = new Schema(
     sale: { type: Boolean, default: false, required: true },
     price_promo: { type: String, default: null },
     search_index: { type: String, default: null },
+    manualDescription: { type: String, default: null },
+    groupName: { type: String, default: null },
+    groupId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Group',
+      default: null,
+    },
   },
   { versionKey: false, timestamps: false },
 );
@@ -26,8 +33,17 @@ const getCmsProduct = Joi.object({
   article: Joi.string().required(),
 });
 
+const updProductGroupSchema = Joi.object({
+  id: Joi.string()
+    .hex()
+    .length(24)
+    .allow(null) // Позволяет передавать null
+    .required(),
+});
+
 const schemasProducts = {
   getCmsProduct,
+  updProductGroupSchema,
 };
 
 const ASGProduct = model('ASGProduct', ASGProductSchema);

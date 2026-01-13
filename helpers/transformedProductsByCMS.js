@@ -34,6 +34,10 @@ const transformedProductsByCMS = products => {
       price_promo: product.price_promo,
       banner: product.banner,
       sale: product.sale,
+
+      groupId: product.groupId,
+      groupName: product.groupName,
+      manualDescription: product.manualDescription,
     };
   });
 };

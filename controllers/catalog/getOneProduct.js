@@ -7,7 +7,7 @@ const { ASGProduct } = require('../../models/asg/products');
 const getOneProduct = async (req, res) => {
   const { id } = req.params;
 
-  console.log('PRODUCT-ID: ', id);
+  // console.log('PRODUCT-ID: ', id);
 
   const result = await ASGProduct.findById(id);
 

@@ -33,6 +33,10 @@ const transformedProductsBySite = products => {
       price_promo: product.price_promo ? Number(product.price_promo) : null,
       banner: product.banner,
       sale: product.sale,
+
+      groupId: product.groupId,
+      groupName: product.groupName,
+      manualDescription: product.manualDescription,
     };
   });
 };
