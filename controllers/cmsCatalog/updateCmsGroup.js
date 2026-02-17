@@ -2,9 +2,9 @@ const { HttpError, buildAncestors } = require('../../helpers');
 const { Group } = require('../../models/asg/groups');
 
 // 3. Обновить группу (с пересчетом вложенности)
-const updateGroup = async (req, res) => {
+const updateCmsGroup = async (req, res) => {
   const { id } = req.params;
-  const { name, slug, parent, margin, img, isVisible } = req.body;
+  const { name, slug, parent, margin, img, isVisible, description } = req.body;
 
   // Находим текущую группу
   const group = await Group.findById(id);
@@ -37,6 +37,7 @@ const updateGroup = async (req, res) => {
       margin,
       img,
       isVisible,
+      description: description || null,
     },
     { new: true },
   );
@@ -84,4 +85,4 @@ const updateGroup = async (req, res) => {
   });
 };
 
-module.exports = updateGroup;
+module.exports = updateCmsGroup;

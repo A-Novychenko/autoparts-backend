@@ -2,7 +2,7 @@ const cloudinary = require('cloudinary').v2;
 
 const { Group } = require('../../models/asg/groups');
 
-const updateGroupImg = async (req, res) => {
+const updateCmsGroupImg = async (req, res) => {
   const { _id } = req.body;
 
   const group = await Group.findById(_id);
@@ -32,4 +32,4 @@ const updateGroupImg = async (req, res) => {
   });
 };
 
-module.exports = updateGroupImg;
+module.exports = updateCmsGroupImg;

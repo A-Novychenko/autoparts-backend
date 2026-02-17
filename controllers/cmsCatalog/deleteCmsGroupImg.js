@@ -1,7 +1,7 @@
 const { HttpError } = require('../../helpers');
 const { Group } = require('../../models/asg/groups');
 
-const deleteGroupImg = async (req, res) => {
+const deleteCmsGroupImg = async (req, res) => {
   const { id } = req.params;
 
   console.log('id', id);
@@ -20,4 +20,4 @@ const deleteGroupImg = async (req, res) => {
   });
 };
 
-module.exports = deleteGroupImg;
+module.exports = deleteCmsGroupImg;

@@ -3,7 +3,7 @@ const { ASGProduct } = require('../../models/asg/products');
 
 const { HttpError } = require('../../helpers');
 
-const updProductGroup = async (req, res) => {
+const updCmsProductGroup = async (req, res) => {
   const productId = req.params.id;
 
   const groupId = req.body.id;
@@ -44,4 +44,4 @@ const updProductGroup = async (req, res) => {
   });
 };
 
-module.exports = updProductGroup;
+module.exports = updCmsProductGroup;

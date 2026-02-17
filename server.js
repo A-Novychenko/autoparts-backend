@@ -5,11 +5,8 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const cron = require('node-cron');
 require('dotenv').config();
-const {
-  createErrorReq,
-  generateSitemapFunc,
-  cronUpdPriceAndStockAsg,
-} = require('./helpers');
+const { createErrorReq } = require('./helpers');
+const { generateSitemapFunc, cronUpdPriceAndStockAsg } = require('./services');
 
 const { PORT = 3005, DB_HOST, SERVER_MODE } = process.env;
 

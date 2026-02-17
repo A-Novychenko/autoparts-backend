@@ -1,4 +1,4 @@
-const { generateSitemapFunc } = require('../../helpers');
+const { generateSitemapFunc } = require('../../services');
 
 const generateSitemapCtrl = async (req, res) => {
   const result = await generateSitemapFunc();

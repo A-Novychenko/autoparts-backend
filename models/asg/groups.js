@@ -1,6 +1,7 @@
 const { Schema, model } = require('mongoose');
-const { handleMongooseError } = require('../../helpers');
 const Joi = require('joi');
+
+const { handleMongooseError } = require('../../helpers');
 
 const groupSchema = new Schema(
   {
@@ -8,6 +9,10 @@ const groupSchema = new Schema(
       type: String,
       required: true,
       trim: true,
+    },
+    description: {
+      type: String,
+      default: null,
     },
     slug: {
       type: String,
@@ -45,12 +50,12 @@ groupSchema.post('save', handleMongooseError);
 groupSchema.index({ parent: 1 });
 groupSchema.index({ 'ancestors._id': 1 });
 
-// module.exports = mongoose.model('Category', CategorySchema);
-
 const objectId = Joi.string().hex().length(24);
 
 const addPGroupSchema = Joi.object({
   name: Joi.string().trim().required(),
+
+  description: Joi.string().allow(null).optional(),
 
   slug: Joi.string().trim().lowercase().required(),
 

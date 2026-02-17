@@ -2,7 +2,7 @@ const { HttpError } = require('../../helpers');
 const { Group } = require('../../models/asg/groups');
 const { ASGProduct } = require('../../models/asg/products');
 
-const deleteGroup = async (req, res) => {
+const deleteCmsGroup = async (req, res) => {
   const { id } = req.params;
 
   // Проверяем, есть ли подкатегории
@@ -26,4 +26,4 @@ const deleteGroup = async (req, res) => {
   res.json({ message: 'Group deleted' });
 };
 
-module.exports = deleteGroup;
+module.exports = deleteCmsGroup;

@@ -1,8 +1,8 @@
 const { buildAncestors } = require('../../helpers'); // Ваш хелпер ошибок
 const { Group } = require('../../models/asg/groups');
 
-const addGroup = async (req, res) => {
-  const { name, slug, parent, margin, img, isVisible } = req.body;
+const addCmsGroup = async (req, res) => {
+  const { name, slug, parent, margin, img, isVisible, description } = req.body;
 
   // Если есть родитель, строим путь. Если нет - массив пустой.
   const ancestors = await buildAncestors(parent, Group);
@@ -15,6 +15,7 @@ const addGroup = async (req, res) => {
     margin,
     img,
     isVisible,
+    description: description || null,
   });
 
   res.json({
@@ -24,4 +25,4 @@ const addGroup = async (req, res) => {
   });
 };
 
-module.exports = addGroup;
+module.exports = addCmsGroup;
