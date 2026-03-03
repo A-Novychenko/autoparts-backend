@@ -1,7 +1,7 @@
 const { DateTime } = require('luxon');
 
 const asgUpdStockAndPriceFunc = require('../helpers/asgUpdStockAndPriceFunc');
-const { generateSitemapFunc } = require('./generateSitemapFunc'); // Импортируем генератор sitemap
+const generateSitemapFunc = require('./generateSitemapFunc');
 
 const sendEmail = require('../helpers/sendEmail');
 
