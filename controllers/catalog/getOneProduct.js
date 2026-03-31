@@ -20,7 +20,8 @@ const getOneProduct = async (req, res) => {
 
   result.margin = category.margin;
 
-  const img = imgResult ? imgResult.original_images : [];
+  // const img = imgResult ? imgResult.original_images : [];
+  const img = imgResult ? imgResult.images : [];
 
   const [product] = transformedProductsBySite([result]);
 
