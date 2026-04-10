@@ -8,7 +8,8 @@ const ASG_URL = process.env.ASG_URL;
 const serviceASG = axios.create({
   baseURL: ASG_URL,
   headers: {
-    'X-Asg-Header': X_ASG_HEADER,
+    // 'X-Asg-Header': X_ASG_HEADER,
+    'X-ASG-Header': X_ASG_HEADER,
   },
 });
 
